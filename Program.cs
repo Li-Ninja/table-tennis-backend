@@ -1,4 +1,6 @@
 using table_tennis_backend.Database.MsSql.TableTennis.Model;
+using table_tennis_backend.Database.MsSql.TableTennis.Repositories;
+using table_tennis_backend.Services;
 using Microsoft.EntityFrameworkCore;
 using Database.DatabaseConfig;
 
@@ -12,7 +14,10 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<TableTennisContext>(options =>
     options.UseSqlServer(databaseConfig.MsSqlConnection));
 
-// Add services to the container.
+// Add service and repository to the container.
+builder.Services.AddScoped<IPlayerService, PlayerService>();
+builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

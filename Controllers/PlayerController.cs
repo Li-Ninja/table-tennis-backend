@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using table_tennis_backend.Database.MsSql.TableTennis.Model;
+using table_tennis_backend.Services;
+using table_tennis_backend.Dtos.Player;
 using Microsoft.EntityFrameworkCore;
+using table_tennis_backend.Database.MsSql.TableTennis.Model;
 
 namespace table_tennis_backend.Controllers;
 
@@ -9,93 +11,38 @@ namespace table_tennis_backend.Controllers;
 [Produces("application/json")]
 public class PlayerController : ControllerBase
 {
-    private readonly TableTennisContext _context;
+    private readonly IPlayerService _service;
 
-    public PlayerController(TableTennisContext context)
+    public PlayerController(IPlayerService service)
     {
-        _context = context;
+        _service = service;
     }
 
     // GET: api/Player
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Player>>> GetPlayer()
+    // TODO result and generic
+    public async Task<IEnumerable<Player>> GetAllPlayerList()
     {
-        return await _context.Player.ToListAsync();
-    }
-
-    // GET: api/Player/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Player>> GetPlayer(int id)
-    {
-        var player = await _context.Player.FindAsync(id);
-
-        if (player == null)
-        {
-            return NotFound();
-        }
-
-        return player;
+        return await _service.GetAllPlayer();
     }
 
     // POST: api/Player
     [HttpPost]
-    public async Task<ActionResult<Player>> CreatePlayer(Player player)
+    public async Task<string> Create(AddReqDto[] req)
     {
-        _context.Player.Add(player);
-        await _context.SaveChangesAsync();
+        await _service.AddPlayer(req);
 
-        return CreatedAtAction(nameof(GetPlayer), new { id = player.Id }, player);
+        return "success";
     }
+
 
     // PUT: api/Player/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdatePlayer(int id, Player player)
+    public async Task<string> UpdatePlayer(UpdateReqDto req)
     {
-        if (id != player.Id)
-        {
-            return BadRequest();
-        }
+        await _service.UpdatePlayer(req);
 
-        _context.Entry(player).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!PlayerExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return NoContent();
-    }
-
-    // DELETE: api/Player/5
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeletePlayer(int id)
-    {
-        var player = await _context.Player.FindAsync(id);
-        if (player == null)
-        {
-            return NotFound();
-        }
-
-        _context.Player.Remove(player);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-     private bool PlayerExists(int id)
-    {
-        return _context.Player.Any(e => e.Id == id);
+        return "success";
     }
 }
 
