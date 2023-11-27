@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add DbContext registration
 var databaseConfig = new DatabaseConfig();
+var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Configuration.GetSection("Database").Bind(databaseConfig);
 
 builder.Services.AddControllers();
@@ -22,6 +23,21 @@ builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(MyAllowSpecificOrigins,
+                        policy =>
+                        {
+                            // TODO 使用環境變數
+                            policy.WithOrigins("http://localhost",
+                                                "http://localhost:9000",
+                                                "localhost",
+                                                "localhost:9000",
+                                                "https://ttt.groninja.com"
+                                                );
+                          });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,6 +47,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(MyAllowSpecificOrigins);
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
