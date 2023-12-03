@@ -18,6 +18,9 @@ public partial class Event
     [Column(TypeName = "date")]
     public DateTime Date { get; set; }
 
+    [Required]
+    public bool IsSingleMatch { get; set; } = true;
+
     [InverseProperty("Event")]
     public virtual ICollection<Result> Result { get; set; } = new List<Result>();
 }
