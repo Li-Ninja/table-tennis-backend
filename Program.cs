@@ -34,7 +34,9 @@ builder.Services.AddCors(options =>
                                                 "localhost",
                                                 "localhost:9000",
                                                 "https://ttt.groninja.com"
-                                                );
+                                                )
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
                           });
 });
 
