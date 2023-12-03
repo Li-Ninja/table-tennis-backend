@@ -16,7 +16,7 @@ public partial class Event
     public string Name { get; set; } = null!;
 
     [Column(TypeName = "date")]
-    public DateTime? Date { get; set; }
+    public DateTime Date { get; set; }
 
     [InverseProperty("Event")]
     public virtual ICollection<Result> Result { get; set; } = new List<Result>();
