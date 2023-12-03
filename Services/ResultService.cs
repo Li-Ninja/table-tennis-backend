@@ -32,7 +32,7 @@ public class ResultService : IResultService
                 {
                     result.Add(new Result
                     {
-                        Id = matchId++, // 分配比赛 ID 并递增
+                        RoundIndex = matchId++, // 分配比赛 ID 并递增
                         Round = currentRound,
                         Event_Id = item.Event_Id
                     });
@@ -53,10 +53,10 @@ public class ResultService : IResultService
         var results = await _repository.ReadAllResult();
         return results.Select(r => new GetAllResDto
         {
-            Id = r.Id,
             Event_Id = r.Event_Id,
             Event_Name = r.Event.Name,
             Round = r.Round,
+            RoundIndex = r.RoundIndex,
             Player_NameA1 = r.PlayerA1?.Name,
             Player_NameA2 = r.PlayerA2?.Name,
             Player_NameB1 = r.PlayerB1?.Name,

@@ -52,6 +52,10 @@ public partial class TableTennisContext : DbContext
                 .HasConstraintName("FK_Result_PlayerB2");
         });
 
+        modelBuilder.Entity<Event>(entity =>
+        {
+            entity.Property(e => e.IsSingleMatch).HasDefaultValueSql("((1))");
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }

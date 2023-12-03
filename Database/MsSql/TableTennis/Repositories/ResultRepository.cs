@@ -25,6 +25,8 @@ public class ResultRepository : IResultRepository
                         .Include(r => r.PlayerA2)
                         .Include(r => r.PlayerB1)
                         .Include(r => r.PlayerB2)
+                        .OrderByDescending(r => r.Round)
+                        .ThenBy(r => r.RoundIndex)
                         .ToListAsync();
     }
 
