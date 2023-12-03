@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add DbContext registration
 var databaseConfig = new DatabaseConfig();
-var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Configuration.GetSection("Database").Bind(databaseConfig);
 
 builder.Services.AddControllers();
@@ -37,7 +37,7 @@ builder.Services.AddCors(options =>
                                                 )
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
-                          });
+                        });
 });
 
 var app = builder.Build();

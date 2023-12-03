@@ -1,0 +1,30 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# 根 EditorConfig 文件，停止向上尋找
+root = true
+
+# 所有文件
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 4
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# C# 文件
+[*.cs]
+indent_size = 4
+max_line_length = 120
+
+# XML 配置文件
+[*.{xml,config}]
+indent_size = 2
+
+# JSON 文件
+[*.json]
+indent_size = 2
+
+# MD 文件
+[*.md]
+trim_trailing_whitespace = false

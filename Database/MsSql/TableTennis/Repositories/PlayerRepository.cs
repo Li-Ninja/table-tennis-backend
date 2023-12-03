@@ -22,7 +22,7 @@ public class PlayerRepository : IPlayerRepository
         return await _db.Player.ToListAsync();
     }
 
-      public async Task<Player?> FindPlayerById(int id)
+    public async Task<Player?> FindPlayerById(int id)
     {
         return await _db.Player.FindAsync(id);
     }

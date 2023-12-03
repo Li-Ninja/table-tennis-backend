@@ -29,7 +29,7 @@ public class PlayerService : IPlayerService
         return await _repository.ReadAllPlayer();
     }
 
-     public async Task UpdatePlayer(UpdateReqDto updateReqDto)
+    public async Task UpdatePlayer(UpdateReqDto updateReqDto)
     {
         var player = await _repository.FindPlayerById(updateReqDto.Id);
 
