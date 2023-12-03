@@ -28,12 +28,12 @@ public class ResultController : ControllerBase
 
     // POST: api/Result
     [HttpPost]
-    // public async Task<string> Create(AddReqDto[] req)
-    // {
-    //     await _service.AddResult(req);
+    public async Task<string> Create(AddReqDto[] req)
+    {
+        await _service.AddResult(req);
 
-    //     return "success";
-    // }
+        return "success";
+    }
 
 
     // PUT: api/Result/5

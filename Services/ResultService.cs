@@ -15,14 +15,37 @@ public class ResultService : IResultService
         _repository = repository;
     }
 
-    // public async Task AddResult(AddReqDto[] req)
-    // {
+    public async Task AddResult(AddReqDto[] req)
+    {
 
-    //     var result = req.Select(r => new Result { Id = r.Name });
+        var result = new List<Result>();
 
-    //     await _repository.CreateResult(result);
-    //     return;
-    // }
+        foreach (var item in req)
+        {
+            int currentRound = item.Round;
+            int matchId = 1; // 比赛 ID 从 1 开始
+
+            while (currentRound >= 2) // 至少需要两队才能进行比赛
+            {
+                int matchesInThisRound = currentRound / 2;
+                for (int i = 0; i < matchesInThisRound; i++)
+                {
+                    result.Add(new Result
+                    {
+                        Id = matchId++, // 分配比赛 ID 并递增
+                        Round = currentRound,
+                        Event_Id = item.Event_Id
+                    });
+                }
+                currentRound /= 2; // 减少到下一轮
+                matchId = 1; // 重置比赛 ID
+            }
+        }
+
+        await _repository.CreateResult(result);
+        return;
+    }
+
 
     public async Task<List<GetAllResDto>> GetAllResult()
     {
