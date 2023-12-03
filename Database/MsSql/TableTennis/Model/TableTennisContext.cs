@@ -25,6 +25,13 @@ public partial class TableTennisContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Result>(entity =>
+        {
+            entity.HasOne(d => d.Event).WithMany(p => p.Result)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Result_Event");
+        });
+
         OnModelCreatingPartial(modelBuilder);
     }
 
