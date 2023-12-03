@@ -3,6 +3,8 @@ using table_tennis_backend.Database.MsSql.TableTennis.Repositories;
 using table_tennis_backend.Services;
 using Microsoft.EntityFrameworkCore;
 using Database.DatabaseConfig;
+using System.Text.Json;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +47,11 @@ builder.Services.AddCors(options =>
                         });
 });
 
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = new JsonCustomNamingPolicy();
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -60,3 +67,34 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public class JsonCustomNamingPolicy : JsonNamingPolicy
+{
+    public override string ConvertName(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return name;
+
+        var stringBuilder = new StringBuilder();
+        bool isNewWord = true;
+
+        foreach (char c in name)
+        {
+            if (c == '_')
+            {
+                stringBuilder.Append('_');
+                isNewWord = true;
+            }
+            else if (isNewWord)
+            {
+                stringBuilder.Append(char.ToLowerInvariant(c));
+                isNewWord = false;
+            }
+            else
+            {
+                stringBuilder.Append(c);
+            }
+        }
+
+        return stringBuilder.ToString();
+    }
+}

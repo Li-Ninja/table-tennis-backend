@@ -31,8 +31,8 @@ public class ResultService : IResultService
         return results.Select(r => new GetAllResDto
         {
             Id = r.Id,
-            Event_id = r.Event_Id,
-            Event_name = r.Event.Name,
+            Event_Id = r.Event_Id,
+            Event_Name = r.Event.Name,
             Round = r.Round,
             Player_Id_A_1 = r.Player_Id_A_1,
             Player_Id_A_2 = r.Player_Id_A_2,
