@@ -20,8 +20,12 @@ public class ResultRepository : IResultRepository
     public async Task<IEnumerable<Result>> ReadAllResult()
     {
         return await _db.Result
-                          .Include(r => r.Event)
-                         .ToListAsync();
+                        .Include(r => r.Event)
+                        .Include(r => r.PlayerA1)
+                        .Include(r => r.PlayerA2)
+                        .Include(r => r.PlayerB1)
+                        .Include(r => r.PlayerB2)
+                        .ToListAsync();
     }
 
 

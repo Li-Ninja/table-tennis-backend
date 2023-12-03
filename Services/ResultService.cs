@@ -34,10 +34,10 @@ public class ResultService : IResultService
             Event_Id = r.Event_Id,
             Event_Name = r.Event.Name,
             Round = r.Round,
-            Player_Id_A_1 = r.Player_Id_A_1,
-            Player_Id_A_2 = r.Player_Id_A_2,
-            Player_Id_B_1 = r.Player_Id_B_1,
-            Player_Id_B_2 = r.Player_Id_B_2
+            Player_NameA1 = r.PlayerA1?.Name,
+            Player_NameA2 = r.PlayerA2?.Name,
+            Player_NameB1 = r.PlayerB1?.Name,
+            Player_NameB2 = r.PlayerB2?.Name
         }).ToList();
     }
 

@@ -30,7 +30,28 @@ public partial class TableTennisContext : DbContext
             entity.HasOne(d => d.Event).WithMany(p => p.Result)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Result_Event");
+
+            entity.HasOne(d => d.PlayerA1)
+                .WithMany()
+                .HasForeignKey(d => d.Player_Id_A_1)
+                .HasConstraintName("FK_Result_PlayerA1");
+
+            entity.HasOne(d => d.PlayerA2)
+                .WithMany()
+                .HasForeignKey(d => d.Player_Id_A_2)
+                .HasConstraintName("FK_Result_PlayerA2");
+
+            entity.HasOne(d => d.PlayerB1)
+                .WithMany()
+                .HasForeignKey(d => d.Player_Id_B_1)
+                .HasConstraintName("FK_Result_PlayerB1");
+
+            entity.HasOne(d => d.PlayerB2)
+                .WithMany()
+                .HasForeignKey(d => d.Player_Id_B_2)
+                .HasConstraintName("FK_Result_PlayerB2");
         });
+
 
         OnModelCreatingPartial(modelBuilder);
     }
