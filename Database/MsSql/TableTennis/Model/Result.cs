@@ -26,6 +26,10 @@ public partial class Result
 
     public int? Player_Id_B_2 { get; set; }
 
+    public int? ScoreA { get; set; }
+
+    public int? ScoreB { get; set; }
+
     [ForeignKey("Event_Id")]
     [InverseProperty("Result")]
     public virtual Event Event { get; set; } = null!;

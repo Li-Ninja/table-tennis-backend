@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace table_tennis_backend.Database.MsSql.TableTennis.Model;
 
-[PrimaryKey("Result_Id", "Event_Id", "Result_Round", "Id")]
+[PrimaryKey("Result_Id", "MatchIndex")]
 [Table("ResultItem")]
 public partial class ResultItem
 {
@@ -14,15 +14,9 @@ public partial class ResultItem
     public int Result_Id { get; set; }
 
     [Key]
-    public int Event_Id { get; set; }
+    public int MatchIndex { get; set; }
 
-    [Key]
-    public int Result_Round { get; set; }
+    public int ScoreA { get; set; }
 
-    [Key]
-    public int Id { get; set; }
-
-    public int Score_A { get; set; }
-
-    public int Score_B { get; set; }
+    public int ScoreB { get; set; }
 }

@@ -33,12 +33,32 @@ public class ResultRepository : IResultRepository
 
     public async Task<Result?> FindResultById(int id)
     {
-        return await _db.Result.FindAsync(id);
+        return await _db.Result
+                    .Include(r => r.Event)
+                    .Include(r => r.PlayerA1)
+                    .Include(r => r.PlayerA2)
+                    .Include(r => r.PlayerB1)
+                    .Include(r => r.PlayerB2)
+                    .FirstOrDefaultAsync(r => r.Id == id);
     }
 
-    public async Task UpdateResult(Result player)
+    public async Task UpdateResult(Result result)
     {
-        _db.Result.Update(player);
-        await _db.SaveChangesAsync();
+        var existingResult = await _db.Result.FindAsync(result.Id);
+
+        if (existingResult != null)
+        {
+            existingResult.Player_Id_A_1 = result.Player_Id_A_1 ?? existingResult.Player_Id_A_1;
+            existingResult.Player_Id_A_2 = result.Player_Id_A_2 ?? existingResult.Player_Id_A_2;
+            existingResult.Player_Id_B_1 = result.Player_Id_B_1 ?? existingResult.Player_Id_B_1;
+            existingResult.Player_Id_B_2 = result.Player_Id_B_2 ?? existingResult.Player_Id_B_2;
+            existingResult.Player_Id_B_2 = result.Player_Id_B_2 ?? existingResult.Player_Id_B_2;
+            existingResult.Player_Id_B_2 = result.Player_Id_B_2 ?? existingResult.Player_Id_B_2;
+            existingResult.ScoreA = result.ScoreA ?? existingResult.ScoreA;
+            existingResult.ScoreB = result.ScoreB ?? existingResult.ScoreB;
+
+            await _db.SaveChangesAsync();
+        }
+
     }
 }

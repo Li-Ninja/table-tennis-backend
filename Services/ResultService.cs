@@ -47,12 +47,13 @@ public class ResultService : IResultService
     }
 
 
-    public async Task<List<GetAllResDto>> GetAllResult()
+    public async Task<List<GetResDto>> GetAllResult()
     {
 
         var results = await _repository.ReadAllResult();
-        return results.Select(r => new GetAllResDto
+        return results.Select(r => new GetResDto
         {
+            Id = r.Id,
             Event_Id = r.Event_Id,
             Event_Name = r.Event.Name,
             Round = r.Round,
@@ -60,8 +61,40 @@ public class ResultService : IResultService
             Player_NameA1 = r.PlayerA1?.Name,
             Player_NameA2 = r.PlayerA2?.Name,
             Player_NameB1 = r.PlayerB1?.Name,
-            Player_NameB2 = r.PlayerB2?.Name
+            Player_NameB2 = r.PlayerB2?.Name,
+            Player_Id_A_1 = r.Player_Id_A_1,
+            Player_Id_A_2 = r.Player_Id_A_2,
+            Player_Id_B_1 = r.Player_Id_B_1,
+            Player_Id_B_2 = r.Player_Id_B_2,
         }).ToList();
+    }
+
+    public async Task<GetResDto?> GetResult(GetReqDto getReqDto)
+    {
+
+        var result = await _repository.FindResultById(getReqDto.Id);
+
+        if (result == null)
+        {
+            return null;
+        }
+        return new GetResDto
+        {
+            Event_Id = result.Event_Id,
+            Event_Name = result.Event.Name,
+            Round = result.Round,
+            RoundIndex = result.RoundIndex,
+            Player_NameA1 = result.PlayerA1?.Name,
+            Player_NameA2 = result.PlayerA2?.Name,
+            Player_NameB1 = result.PlayerB1?.Name,
+            Player_NameB2 = result.PlayerB1?.Name,
+            Player_Id_A_1 = result.Player_Id_A_1,
+            Player_Id_A_2 = result.Player_Id_A_2,
+            Player_Id_B_1 = result.Player_Id_B_1,
+            Player_Id_B_2 = result.Player_Id_B_2,
+            ScoreA = result.ScoreA,
+            ScoreB = result.ScoreB,
+        };
     }
 
     public async Task UpdateResult(UpdateReqDto updateReqDto)
@@ -70,10 +103,18 @@ public class ResultService : IResultService
 
         if (Result == null)
         {
-            throw new KeyNotFoundException("Result not found.");
+            throw new KeyNotFoundException("UpdateResult not found.");
         }
 
-        // Result.Name = updateReqDto.Name;
-        await _repository.UpdateResult(Result);
+        await _repository.UpdateResult(new Result
+        {
+            Id = Result.Id,
+            Player_Id_A_1 = updateReqDto.Player_Id_A_1,
+            Player_Id_A_2 = updateReqDto.Player_Id_A_2,
+            Player_Id_B_1 = updateReqDto.Player_Id_B_1,
+            Player_Id_B_2 = updateReqDto.Player_Id_B_2,
+            ScoreA = updateReqDto.ScoreA,
+            ScoreB = updateReqDto.ScoreB,
+        });
     }
 }

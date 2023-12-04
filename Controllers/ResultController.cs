@@ -21,7 +21,7 @@ public class ResultController : ControllerBase
     // GET: api/Result
     [HttpGet]
     // TODO result and generic
-    public async Task<IEnumerable<GetAllResDto>> GetAllResultList()
+    public async Task<List<GetResDto>> GetAllResultList()
     {
         return await _service.GetAllResult();
     }
@@ -36,8 +36,8 @@ public class ResultController : ControllerBase
     }
 
 
-    // PUT: api/Result/5
-    [HttpPut("{id}")]
+    // PUT: api/Result/
+    [HttpPut]
     public async Task<string> UpdateResult(UpdateReqDto req)
     {
         await _service.UpdateResult(req);
