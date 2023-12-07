@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Database.DatabaseConfig;
 using System.Text.Json;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,14 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.CustomSchemaIds(type => type.FullName); // 使用完整類型名稱作為 schemaId
 });
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+    });
 
 builder.Services.AddCors(options =>
 {
@@ -67,6 +76,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors(MyAllowSpecificOrigins);
 app.UseHttpsRedirection();
+app.UseCookiePolicy();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
