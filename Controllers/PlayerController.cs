@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using table_tennis_backend.Const;
 using table_tennis_backend.Services;
 using table_tennis_backend.Dtos.Player;
 using Microsoft.EntityFrameworkCore;
@@ -21,28 +22,48 @@ public class PlayerController : ControllerBase
     // GET: api/Player
     [HttpGet]
     // TODO result and generic
-    public async Task<IEnumerable<Player>> GetAllPlayerList()
+    public async Task<IActionResult> GetAllPlayerList()
     {
-        return await _service.GetAllPlayer();
+        if (!Auth.ValidateToken(HttpContext))
+        {
+            HttpContext.Response.StatusCode = 403;
+            return new JsonResult("");
+        }
+
+
+        var players = await _service.GetAllPlayer();
+        return Ok(players);
     }
 
     // POST: api/Player
     [HttpPost]
-    public async Task<string> Create(AddReqDto[] req)
+    public async Task<IActionResult> Create(AddReqDto[] req)
     {
+        if (!Auth.ValidateToken(HttpContext))
+        {
+            HttpContext.Response.StatusCode = 403;
+            return new JsonResult("");
+        }
+
         await _service.AddPlayer(req);
 
-        return "success";
+        return Ok("success");
     }
 
 
     // PUT: api/Player/5
     [HttpPut("{id}")]
-    public async Task<string> UpdatePlayer(UpdateReqDto req)
+    public async Task<IActionResult> UpdatePlayer(UpdateReqDto req)
     {
+        if (!Auth.ValidateToken(HttpContext))
+        {
+            HttpContext.Response.StatusCode = 403;
+            return new JsonResult("");
+        }
+
         await _service.UpdatePlayer(req);
 
-        return "success";
+        return Ok("success");
     }
 }
 

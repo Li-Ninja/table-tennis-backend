@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using table_tennis_backend.Services;
+using table_tennis_backend.Const;
 using table_tennis_backend.Dtos.Result;
 using Microsoft.EntityFrameworkCore;
 using table_tennis_backend.Database.MsSql.TableTennis.Model;
@@ -21,28 +22,48 @@ public class ResultController : ControllerBase
     // GET: api/Result
     [HttpGet]
     // TODO result and generic
-    public async Task<List<GetResDto>> GetAllResultList()
+    public async Task<IActionResult> GetAllResultList()
     {
-        return await _service.GetAllResult();
+        if (!Auth.ValidateToken(HttpContext))
+        {
+            HttpContext.Response.StatusCode = 403;
+            return new JsonResult("");
+        }
+
+        var result = await _service.GetAllResult();
+
+        return Ok(result);
     }
 
     // POST: api/Result
     [HttpPost]
-    public async Task<string> Create(AddReqDto[] req)
+    public async Task<IActionResult> Create(AddReqDto[] req)
     {
+        if (!Auth.ValidateToken(HttpContext))
+        {
+            HttpContext.Response.StatusCode = 403;
+            return new JsonResult("");
+        }
+
         await _service.AddResult(req);
 
-        return "success";
+        return Ok("success");
+
     }
 
 
     // PUT: api/Result/
     [HttpPut]
-    public async Task<string> UpdateResult(UpdateReqDto req)
+    public async Task<IActionResult> UpdateResult(UpdateReqDto req)
     {
+        if (!Auth.ValidateToken(HttpContext))
+        {
+            HttpContext.Response.StatusCode = 403;
+            return new JsonResult("");
+        }
         await _service.UpdateResult(req);
 
-        return "success";
+        return Ok("success");
     }
 }
 
