@@ -42,18 +42,27 @@ public class ResultRepository : IResultRepository
                     .FirstOrDefaultAsync(r => r.Id == id);
     }
 
+    public async Task<Result?> FindResultByOtherId(int event_id, int round, int roundIndex)
+    {
+        return await _db.Result
+                    .Include(r => r.Event)
+                    .Include(r => r.PlayerA1)
+                    .Include(r => r.PlayerA2)
+                    .Include(r => r.PlayerB1)
+                    .Include(r => r.PlayerB2)
+                    .FirstOrDefaultAsync(r => r.Event_Id == event_id && r.Round == round && r.RoundIndex == roundIndex);
+    }
+
     public async Task UpdateResult(Result result)
     {
         var existingResult = await _db.Result.FindAsync(result.Id);
 
         if (existingResult != null)
         {
-            existingResult.Player_Id_A_1 = result.Player_Id_A_1 ?? existingResult.Player_Id_A_1;
-            existingResult.Player_Id_A_2 = result.Player_Id_A_2 ?? existingResult.Player_Id_A_2;
-            existingResult.Player_Id_B_1 = result.Player_Id_B_1 ?? existingResult.Player_Id_B_1;
-            existingResult.Player_Id_B_2 = result.Player_Id_B_2 ?? existingResult.Player_Id_B_2;
-            existingResult.Player_Id_B_2 = result.Player_Id_B_2 ?? existingResult.Player_Id_B_2;
-            existingResult.Player_Id_B_2 = result.Player_Id_B_2 ?? existingResult.Player_Id_B_2;
+            existingResult.Player_Id_A_1 = result.Player_Id_A_1;
+            existingResult.Player_Id_A_2 = result.Player_Id_A_2;
+            existingResult.Player_Id_B_1 = result.Player_Id_B_1;
+            existingResult.Player_Id_B_2 = result.Player_Id_B_2;
             existingResult.ScoreA = result.ScoreA ?? existingResult.ScoreA;
             existingResult.ScoreB = result.ScoreB ?? existingResult.ScoreB;
 

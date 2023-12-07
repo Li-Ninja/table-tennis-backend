@@ -6,6 +6,6 @@ namespace table_tennis_backend.Services;
 public interface IResultItemService
 {
     Task<string> AddResultItem(AddReqDto[] req);
-    Task<List<GetResDto>> GetResultItemList(GetReqDto req);
+    Task<List<GetResDto>> GetResultItemList(int id);
     // Task UpdateResultItem(UpdateReqDto req);
 }

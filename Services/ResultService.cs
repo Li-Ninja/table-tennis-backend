@@ -66,6 +66,8 @@ public class ResultService : IResultService
             Player_Id_A_2 = r.Player_Id_A_2,
             Player_Id_B_1 = r.Player_Id_B_1,
             Player_Id_B_2 = r.Player_Id_B_2,
+            ScoreA = r.ScoreA,
+            ScoreB = r.ScoreB,
         }).ToList();
     }
 
@@ -80,6 +82,36 @@ public class ResultService : IResultService
         }
         return new GetResDto
         {
+            Id = result.Id,
+            Event_Id = result.Event_Id,
+            Event_Name = result.Event.Name,
+            Round = result.Round,
+            RoundIndex = result.RoundIndex,
+            Player_NameA1 = result.PlayerA1?.Name,
+            Player_NameA2 = result.PlayerA2?.Name,
+            Player_NameB1 = result.PlayerB1?.Name,
+            Player_NameB2 = result.PlayerB1?.Name,
+            Player_Id_A_1 = result.Player_Id_A_1,
+            Player_Id_A_2 = result.Player_Id_A_2,
+            Player_Id_B_1 = result.Player_Id_B_1,
+            Player_Id_B_2 = result.Player_Id_B_2,
+            ScoreA = result.ScoreA,
+            ScoreB = result.ScoreB,
+        };
+    }
+
+    public async Task<GetResDto> GetResultByOtherId(int event_id, int round, int roundIndex)
+    {
+
+        var result = await _repository.FindResultByOtherId(event_id, round, roundIndex);
+
+        if (result == null)
+        {
+            return null;
+        }
+        return new GetResDto
+        {
+            Id = result.Id,
             Event_Id = result.Event_Id,
             Event_Name = result.Event.Name,
             Round = result.Round,

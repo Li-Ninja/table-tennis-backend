@@ -18,12 +18,12 @@ public class ResultItemController : ControllerBase
         _service = service;
     }
 
-    // GET: api/ResultItem
-    [HttpGet]
+    // GET: api/ResultItem/5
+    [HttpGet("{id}")]
     // TODO result and generic
-    public async Task<IEnumerable<GetResDto>> GetResultItemList(GetReqDto req)
+    public async Task<IEnumerable<GetResDto>> GetResultItemList(int id)
     {
-        return await _service.GetResultItemList(req);
+        return await _service.GetResultItemList(id);
     }
 
     // POST: api/ResultItem

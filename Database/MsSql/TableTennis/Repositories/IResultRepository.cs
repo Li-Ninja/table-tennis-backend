@@ -7,5 +7,7 @@ public interface IResultRepository
     Task<IEnumerable<Result>> ReadAllResult();
 
     Task<Result?> FindResultById(int id);
+    Task<Result?> FindResultByOtherId(int event_id, int round, int roundIndex);
+
     Task UpdateResult(Result result);
 }
