@@ -39,7 +39,7 @@ services:
       DATABASE_PORT: 1433
 
   db:
-    image: mcr.microsoft.com/azure-sql-edge
+    image: mcr.microsoft.com/dotnet/sdk:8.0
     environment:
       SA_PASSWORD: "${DB_PASSWORD}"
       ACCEPT_EULA: "Y"
