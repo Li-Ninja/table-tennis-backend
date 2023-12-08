@@ -62,10 +62,10 @@ deploy:
 
           export TT_BACKEND_IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG;
 
-          export TT_FRONTEND_IMAGE_NAME=$(docker ps --format "{{.Image}}" | grep -E "ttFrontend");
-          export TT_ADMIN_FRONTEND_IMAGE_NAME=$(docker ps --format "{{.Image}}" | grep -E "ttAdminFrontend");
-          export FRONTEND_IMAGE_NAME=$(docker ps --format "{{.Image}}" | grep -E "frontend");
-          export BACKEND_IMAGE_NAME=$(docker ps --format "{{.Image}}" | grep -E "backend");
+          export TT_FRONTEND_IMAGE_NAME=$(docker ps --format "{{.Image}}" | grep -E "table-tennis");
+          export TT_ADMIN_FRONTEND_IMAGE_NAME=$(docker ps --format "{{.Image}}" | grep -E "table-tennis-admin");
+          export FRONTEND_IMAGE_NAME=$(docker ps --format "{{.Image}}" | grep -E "vocabulary-frontend");
+          export BACKEND_IMAGE_NAME=$(docker ps --format "{{.Image}}" | grep -E "vocabulary-backend");
 
           if [ "$TT_FRONTEND_IMAGE_NAME" = "" ]; then
           TT_FRONTEND_IMAGE_NAME="registry.gitlab.com/ninja-ccc/table-tennis/table-tennis:latest";
