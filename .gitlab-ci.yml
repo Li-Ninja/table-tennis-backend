@@ -60,7 +60,7 @@ deploy:
           set -x;
           docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY";
 
-          export TT_ADMIN_FRONTEND_IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG;
+          export TT_BACKEND_IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG;
 
           export TT_FRONTEND_IMAGE_NAME=$(docker ps --format "{{.Image}}" | grep -E "ttFrontend");
           export TT_ADMIN_FRONTEND_IMAGE_NAME=$(docker ps --format "{{.Image}}" | grep -E "ttAdminFrontend");
