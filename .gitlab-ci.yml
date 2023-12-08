@@ -74,7 +74,7 @@ deploy:
           TT_ADMIN_FRONTEND_IMAGE_NAME="registry.gitlab.com/ninja-ccc/table-tennis/table-tennis-admin:latest";
           fi;
           if [ "$FRONTEND_IMAGE_NAME" = "" ]; then
-          FRONT_IMAGE_NAME="registry.gitlab.com/ninja-ccc/vocabulary/vocabulary-frontend:latest";
+          FRONTEND_IMAGE_NAME="registry.gitlab.com/ninja-ccc/vocabulary/vocabulary-frontend:latest";
           fi;
           if [ "$BACKEND_IMAGE_NAME" = "" ]; then
           BACKEND_IMAGE_NAME="registry.gitlab.com/ninja-ccc/vocabulary/vocabulary-backend:latest";
