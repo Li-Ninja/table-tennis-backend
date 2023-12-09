@@ -45,8 +45,10 @@ builder.Services.AddCors(options =>
                                                 "localhost",
                                                 "localhost:9000",
                                                 "https://tt.akaininja.com",
-                                                "http://35.201.131.209:82/",
-                                                "http://35.201.131.209:81/"
+                                                "http://35.201.131.209:82",
+                                                "http://35.201.131.209:81",
+                                                "35.201.131.209:82",
+                                                "35.201.131.209:81"
                                                 )
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
