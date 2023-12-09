@@ -44,7 +44,11 @@ builder.Services.AddCors(options =>
                                                 "http://localhost:9000",
                                                 "localhost",
                                                 "localhost:9000",
-                                                "https://ttt.groninja.com"
+                                                "https://tt.akaininja.com",
+                                                "http://35.201.131.209:82",
+                                                "http://35.201.131.209:81",
+                                                "35.201.131.209:82",
+                                                "35.201.131.209:81"
                                                 )
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
@@ -59,11 +63,9 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors(MyAllowSpecificOrigins);
 app.UseHttpsRedirection();

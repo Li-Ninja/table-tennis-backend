@@ -36,6 +36,16 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "gcp": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://*:7183;http://*:5231",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "GCP"
+      }
     }
   }
 }

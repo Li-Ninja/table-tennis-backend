@@ -1,0 +1,86 @@
+stages:
+    - build
+    - docker-image
+    - deploy
+
+workflow:
+    rules:
+        - if: ($CI_COMMIT_TAG != null)
+          when: always
+        - when: never
+
+build:
+    stage: build
+    tags:
+        - dev-runner
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    artifacts:
+        expire_in: "2 weeks and 1 day"
+        when: on_success
+        paths:
+            - ./publish
+    script:
+        - dotnet restore
+        - dotnet build
+        - dotnet publish -c Release -o ./publish
+
+docker-image:
+    stage: docker-image
+    tags:
+        - dev-runner
+    image: docker:19.03.12
+    dependencies:
+        - build
+    before_script:
+        - echo -e "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    script:
+        - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG .
+        - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG $CI_REGISTRY_IMAGE:latest
+
+        # push to gitlab registry
+        - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+        - docker push $CI_REGISTRY_IMAGE:latest
+    after_script:
+        - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+        - docker rmi $CI_REGISTRY_IMAGE:latest
+        - docker logout "$CI_REGISTRY"
+
+deploy:
+    stage: deploy
+    tags:
+        - dev-runner
+    image: docker:stable
+    before_script:
+        - eval $(ssh-agent -s)
+        - echo "$GCP_PRIVATE_KEY" | ssh-add -
+
+    script:
+        - scp -o StrictHostKeyChecking=no ./docker-compose.yml $GCP_USER@$GCP_VOCABULARY_SERVER_DEV:/home/$GCP_USER
+        - ssh -o StrictHostKeyChecking=no $GCP_USER@$GCP_VOCABULARY_SERVER_DEV -o SendEnv="CI_REGISTRY_USER CI_REGISTRY_PASSWORD CI_REGISTRY CI_REGISTRY_IMAGE CI_COMMIT_TAG CI_DB_PASSWORD" '
+          set -x;
+          docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY";
+
+          export TT_BACKEND_IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG;
+
+          export TT_FRONTEND_IMAGE_NAME=$(docker ps --format "{{.Image}}" | grep -E "table-tennis:");
+          export TT_ADMIN_FRONTEND_IMAGE_NAME=$(docker ps --format "{{.Image}}" | grep -E "table-tennis-admin:");
+          export FRONTEND_IMAGE_NAME=$(docker ps --format "{{.Image}}" | grep -E "vocabulary-frontend:");
+          export BACKEND_IMAGE_NAME=$(docker ps --format "{{.Image}}" | grep -E "vocabulary-backend:");
+
+          if [ "$TT_FRONTEND_IMAGE_NAME" = "" ]; then
+          TT_FRONTEND_IMAGE_NAME="registry.gitlab.com/ninja-ccc/table-tennis/table-tennis:latest";
+          fi;
+          if [ "$TT_ADMIN_FRONTEND_IMAGE_NAME" = "" ]; then
+          TT_ADMIN_FRONTEND_IMAGE_NAME="registry.gitlab.com/ninja-ccc/table-tennis/table-tennis-admin:latest";
+          fi;
+          if [ "$FRONTEND_IMAGE_NAME" = "" ]; then
+          FRONTEND_IMAGE_NAME="registry.gitlab.com/ninja-ccc/vocabulary/vocabulary-frontend:latest";
+          fi;
+          if [ "$BACKEND_IMAGE_NAME" = "" ]; then
+          BACKEND_IMAGE_NAME="registry.gitlab.com/ninja-ccc/vocabulary/vocabulary-backend:latest";
+          fi;
+
+          docker image prune -a --force &&
+          docker-compose down &&
+          docker-compose up -d;
+          docker logout "$CI_REGISTRY"'
