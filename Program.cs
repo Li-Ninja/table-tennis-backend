@@ -49,7 +49,8 @@ builder.Services.AddCors(options =>
                                                 "35.201.131.209:82",
                                                 "35.201.131.209:81",
                                                 "https://tt.redxninja.com",
-                                                "https://tt-admin.redxninja.com"
+                                                "https://tt-admin.redxninja.com",
+                                                "https://tt-api.redxninja.com"
                                                 )
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
