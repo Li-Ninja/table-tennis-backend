@@ -53,6 +53,11 @@ public class ResultRepository : IResultRepository
                     .FirstOrDefaultAsync(r => r.Event_Id == event_id && r.Round == round && r.RoundIndex == roundIndex);
     }
 
+    public async Task<IEnumerable<Result>> FindResultListByEventId(int event_id)
+    {
+        return await _db.Result.Where(r => r.Event_Id == event_id).ToListAsync();
+    }
+
     public async Task UpdateResult(Result result)
     {
         var existingResult = await _db.Result.FindAsync(result.Id);
@@ -69,5 +74,17 @@ public class ResultRepository : IResultRepository
             await _db.SaveChangesAsync();
         }
 
+    }
+
+    public async Task DeleteResult(int id)
+    {
+        var result = await _db.Result.Where(r => r.Event_Id == id).ToListAsync();
+
+
+        if (result != null)
+        {
+            _db.Result.RemoveRange(result);
+            await _db.SaveChangesAsync();
+        }
     }
 }

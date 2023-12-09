@@ -10,4 +10,5 @@ public interface IResultService
     Task<List<GetResDto>> GetAllResult();
     Task<GetResDto> GetResultByOtherId(int event_id, int round, int roundIndex);
     Task UpdateResult(UpdateReqDto req);
+    Task DeleteResult(int id);
 }

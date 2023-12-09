@@ -29,4 +29,17 @@ public class ResultItemRepository : IResultItemRepository
         _db.ResultItem.Update(result);
         await _db.SaveChangesAsync();
     }
+
+
+    public async Task DeleteResultItem(List<int> ids)
+    {
+        // 查找所有匹配的實體
+        var result = _db.ResultItem.Where(entity => ids.Contains(entity.Result_Id)).ToList();
+
+        if (result.Any())
+        {
+            _db.ResultItem.RemoveRange(result);
+            await _db.SaveChangesAsync();
+        }
+    }
 }

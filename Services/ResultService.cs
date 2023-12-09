@@ -9,10 +9,12 @@ using Microsoft.EntityFrameworkCore;
 public class ResultService : IResultService
 {
     private readonly IResultRepository _repository;
+    private readonly IResultItemRepository _repository_result_item;
 
-    public ResultService(IResultRepository repository)
+    public ResultService(IResultRepository repository, IResultItemRepository repository_result_item)
     {
         _repository = repository;
+        _repository_result_item = repository_result_item;
     }
 
     public async Task AddResult(AddReqDto[] req)
@@ -151,5 +153,17 @@ public class ResultService : IResultService
             ScoreA = updateReqDto.ScoreA,
             ScoreB = updateReqDto.ScoreB,
         });
+    }
+
+    public async Task DeleteResult(int event_id)
+    {
+        // 先刪除 ResultItem
+        var result = await _repository.FindResultListByEventId(event_id);
+        var idList = result.Select(r => r.Id).ToList();
+        await _repository_result_item.DeleteResultItem(idList);
+
+
+        // 在刪除 Result
+        await _repository.DeleteResult(event_id);
     }
 }
