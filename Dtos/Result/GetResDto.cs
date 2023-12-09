@@ -4,6 +4,7 @@ public class GetResDto
     public int Id { get; set; }
     public int Event_Id { get; set; }
     public string Event_Name { get; set; } = string.Empty;
+    public Boolean IsSingleMatch { get; set; }
     public int Round { get; set; }
     public int RoundIndex { get; set; }
     public string? Player_NameA1 { get; set; }

@@ -51,11 +51,14 @@ public class ResultService : IResultService
     {
 
         var results = await _repository.ReadAllResult();
-        return results.Select(r => new GetResDto
+        return results
+        .OrderBy(r => r.Id)
+        .Select(r => new GetResDto
         {
             Id = r.Id,
             Event_Id = r.Event_Id,
             Event_Name = r.Event.Name,
+            IsSingleMatch = r.Event.IsSingleMatch,
             Round = r.Round,
             RoundIndex = r.RoundIndex,
             Player_NameA1 = r.PlayerA1?.Name,
