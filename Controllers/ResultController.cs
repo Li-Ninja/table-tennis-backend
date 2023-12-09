@@ -24,12 +24,6 @@ public class ResultController : ControllerBase
     // TODO result and generic
     public async Task<IActionResult> GetAllResultList()
     {
-        if (!Auth.ValidateToken(HttpContext))
-        {
-            HttpContext.Response.StatusCode = 403;
-            return new JsonResult("");
-        }
-
         var result = await _service.GetAllResult();
 
         return Ok(result);

@@ -24,12 +24,6 @@ public class ResultItemController : ControllerBase
     // TODO result and generic
     public async Task<IActionResult> GetResultItemList(int id)
     {
-        if (!Auth.ValidateToken(HttpContext))
-        {
-            HttpContext.Response.StatusCode = 403;
-            return new JsonResult("");
-        }
-
         var result = await _service.GetResultItemList(id);
 
         return Ok(result);
