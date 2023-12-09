@@ -41,6 +41,7 @@ builder.Services.AddCors(options =>
                         {
                             // TODO 使用環境變數
                             policy.WithOrigins("http://localhost",
+                                                "http://localhost:3000",
                                                 "http://localhost:9000",
                                                 "localhost",
                                                 "localhost:9000",
