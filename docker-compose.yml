@@ -31,4 +31,6 @@ services:
     image: ${TT_BACKEND_IMAGE_NAME}
     ports:
       - 83:8080
+    links:
+      - db:db
     restart: always
