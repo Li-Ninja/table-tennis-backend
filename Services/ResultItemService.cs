@@ -131,6 +131,18 @@ public class ResultItemService : IResultItemService
     }
 
 
+    public async Task<List<GetResDto>> GetAllResultItemList()
+    {
+        var result = await _repository.ReadAllResultItem();
+        return result.Select(r => new GetResDto
+        {
+            Result_Id = r.Result_Id,
+            MatchIndex = r.MatchIndex,
+            ScoreA = r.ScoreA,
+            ScoreB = r.ScoreB,
+        }).ToList();
+    }
+
     public async Task<List<GetResDto>> GetResultItemList(int id)
     {
         var result = await _repository.FindResultItemById(id);

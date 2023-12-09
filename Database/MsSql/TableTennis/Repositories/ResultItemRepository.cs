@@ -17,6 +17,12 @@ public class ResultItemRepository : IResultItemRepository
         await _db.SaveChangesAsync();
     }
 
+
+    public async Task<IEnumerable<ResultItem>> ReadAllResultItem()
+    {
+        return await _db.ResultItem.ToListAsync();
+    }
+
     public async Task<List<ResultItem>> FindResultItemById(int id)
     {
         return await _db.ResultItem

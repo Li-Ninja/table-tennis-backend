@@ -19,7 +19,15 @@ public class ResultItemController : ControllerBase
         _service = service;
     }
 
-    // GET: api/ResultItem/5
+    // GET: api/ResultItem
+    [HttpGet]
+    public async Task<IActionResult> GetAllResultItemList()
+    {
+        var result = await _service.GetAllResultItemList();
+
+        return Ok(result);
+    }
+
     [HttpGet("{id}")]
     // TODO result and generic
     public async Task<IActionResult> GetResultItemList(int id)
