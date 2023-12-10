@@ -8,4 +8,5 @@ public interface IResultItemRepository
     Task<List<ResultItem>> FindResultItemById(int id);
     Task UpdateResultItem(ResultItem result);
     Task DeleteResultItem(List<int> ids);
+    Task DeleteResultItemById(int id);
 }

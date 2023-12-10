@@ -51,5 +51,20 @@ public class ResultItemController : ControllerBase
 
         return Ok("success");
     }
+
+    // DELETE: api/ResultItem
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteResultItem(int id)
+    {
+        if (!Auth.ValidateToken(HttpContext))
+        {
+            HttpContext.Response.StatusCode = 403;
+            return new JsonResult("");
+        }
+
+        await _service.DeleteResultItem(id);
+
+        return Ok("success");
+    }
 }
 

@@ -154,4 +154,10 @@ public class ResultItemService : IResultItemService
             ScoreB = r.ScoreB,
         }).ToList();
     }
+
+    public async Task DeleteResultItem(int result_id)
+    {
+        // 先刪除 ResultItem
+        await _repository.DeleteResultItemById(result_id);
+    }
 }

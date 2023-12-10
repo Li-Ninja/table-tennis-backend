@@ -8,5 +8,5 @@ public interface IResultItemService
     Task<string> AddResultItem(AddReqDto[] req);
     Task<List<GetResDto>> GetAllResultItemList();
     Task<List<GetResDto>> GetResultItemList(int id);
-    // Task UpdateResultItem(UpdateReqDto req);
+    Task DeleteResultItem(int result_id);
 }

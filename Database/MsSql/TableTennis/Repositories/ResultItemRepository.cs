@@ -48,4 +48,16 @@ public class ResultItemRepository : IResultItemRepository
             await _db.SaveChangesAsync();
         }
     }
+    public async Task DeleteResultItemById(int id)
+    {
+        // 查找所有匹配的實體
+        var result = await _db.ResultItem.Where(r => r.Result_Id == id).ToListAsync();
+
+
+        if (result != null)
+        {
+            _db.ResultItem.RemoveRange(result);
+            await _db.SaveChangesAsync();
+        }
+    }
 }
