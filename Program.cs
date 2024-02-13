@@ -19,17 +19,22 @@ var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
 
 Console.WriteLine($"DB IP: {dbIp}");
 
-var connectionString = (builder.Configuration.GetConnectionString("MsSqlConnection") ?? "")
+databaseConfig.MsSqlConnection = databaseConfig.MsSqlConnection
     .Replace("${DB_IP}", dbIp)
     .Replace("${DB_PASSWORD}", dbPassword);
 
-Console.WriteLine($"connectionString: {connectionString}");
 
-databaseConfig.MsSqlConnection = connectionString;
+Console.WriteLine($"databaseConfig.MsSqlConnection 0: {databaseConfig.MsSqlConnection}");
+
+Console.WriteLine($"databaseConfig.MsSqlConnection 1: {databaseConfig.MsSqlConnection
+    .Replace("${DB_IP}", dbIp)
+    .Replace("${DB_PASSWORD}", dbPassword)}");
+
+
 
 builder.Configuration.GetSection("Database").Bind(databaseConfig);
 
-Console.WriteLine($"databaseConfig.MsSqlConnection: {databaseConfig.MsSqlConnection}");
+Console.WriteLine($"databaseConfig.MsSqlConnection 2: {databaseConfig.MsSqlConnection}");
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<TableTennisContext>(options =>
