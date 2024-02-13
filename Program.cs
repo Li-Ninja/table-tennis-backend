@@ -45,13 +45,10 @@ builder.Services.AddCors(options =>
                                                 "http://localhost:9000",
                                                 "localhost",
                                                 "localhost:9000",
-                                                "http://35.201.131.209:82",
-                                                "http://35.201.131.209:81",
-                                                "35.201.131.209:82",
-                                                "35.201.131.209:81",
-                                                "https://tt.redxninja.com",
-                                                "https://tt-admin.redxninja.com",
-                                                "https://tt-api.redxninja.com"
+                                                "https://ttt.redxninja.com",
+                                                "https://ttt-admin.redxninja.com",
+                                                "https://ttt-api.redxninja.com",
+                                                "https://table-tennis-admin-whvz2vfgsq-de.a.run.app"
                                                 )
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
