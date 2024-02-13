@@ -19,26 +19,23 @@ var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
 
 Console.WriteLine($"DB IP: {dbIp}");
 
-databaseConfig.MsSqlConnection = databaseConfig.MsSqlConnection
+var connectionStringTemplate = builder.Configuration.GetConnectionString("MsSqlConnection") ?? "";
+
+Console.WriteLine($"connectionStringTemplate: {connectionStringTemplate}");
+
+var connectionString = connectionStringTemplate
     .Replace("${DB_IP}", dbIp)
     .Replace("${DB_PASSWORD}", dbPassword);
 
-
-Console.WriteLine($"databaseConfig.MsSqlConnection 0: {databaseConfig.MsSqlConnection}");
-
-Console.WriteLine($"databaseConfig.MsSqlConnection 1: {databaseConfig.MsSqlConnection
-    .Replace("${DB_IP}", dbIp)
-    .Replace("${DB_PASSWORD}", dbPassword)}");
+// 打印替换后的连接字符串进行调试（请在生产环境中移除）
+Console.WriteLine($"Final Connection String: {connectionString}");
 
 
-
-builder.Configuration.GetSection("Database").Bind(databaseConfig);
-
-Console.WriteLine($"databaseConfig.MsSqlConnection 2: {databaseConfig.MsSqlConnection}");
+Console.WriteLine($"databaseConfig.MsSqlConnection: {databaseConfig.MsSqlConnection}");
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<TableTennisContext>(options =>
-    options.UseSqlServer(databaseConfig.MsSqlConnection));
+    options.UseSqlServer(connectionString));
 
 // Add service and repository to the container.
 builder.Services.AddScoped<IPlayerService, PlayerService>();
