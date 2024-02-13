@@ -8,6 +8,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
+
 // Add DbContext registration
 var databaseConfig = new DatabaseConfig();
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
