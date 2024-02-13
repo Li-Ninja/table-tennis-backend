@@ -17,13 +17,19 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var dbIp = Environment.GetEnvironmentVariable("DB_IP") ?? "";
 var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
 
+Console.WriteLine($"DB IP: {dbIp}");
+
 var connectionString = (builder.Configuration.GetConnectionString("MsSqlConnection") ?? "")
     .Replace("${DB_IP}", dbIp)
     .Replace("${DB_PASSWORD}", dbPassword);
 
+Console.WriteLine($"connectionString: {connectionString}");
+
 databaseConfig.MsSqlConnection = connectionString;
 
 builder.Configuration.GetSection("Database").Bind(databaseConfig);
+
+Console.WriteLine($"databaseConfig.MsSqlConnection: {databaseConfig.MsSqlConnection}");
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<TableTennisContext>(options =>
