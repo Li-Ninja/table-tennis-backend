@@ -13,6 +13,16 @@ Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
 // Add DbContext registration
 var databaseConfig = new DatabaseConfig();
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+var dbIp = Environment.GetEnvironmentVariable("DB_IP") ?? "";
+var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
+
+var connectionString = (builder.Configuration.GetConnectionString("MsSqlConnection") ?? "")
+    .Replace("${DB_IP}", dbIp)
+    .Replace("${DB_PASSWORD}", dbPassword);
+
+databaseConfig.MsSqlConnection = connectionString;
+
 builder.Configuration.GetSection("Database").Bind(databaseConfig);
 
 builder.Services.AddControllers();
