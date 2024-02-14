@@ -8,7 +8,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
+var environmentName = builder.Environment.EnvironmentName;
+
+Console.WriteLine($"Environment: {environmentName}");
 
 // Add DbContext registration
 var databaseConfig = new DatabaseConfig();
@@ -17,25 +19,18 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var dbIp = Environment.GetEnvironmentVariable("DB_IP") ?? "";
 var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
 
-Console.WriteLine($"DB IP: {dbIp}");
 
-var connectionStringTemplate = builder.Configuration.GetConnectionString("MsSqlConnection") ?? "";
-
-Console.WriteLine($"connectionStringTemplate: {connectionStringTemplate}");
-
-var connectionString = connectionStringTemplate
+// TODO 在這個階段，應該要從 appsettings.json 讀取但都失敗，所以先改成判斷環境名稱然後寫死字串
+var msSqlConnection = environmentName == "GCP"
+? "Data Source=${DB_IP},1433; User ID=sa; Password=${DB_PASSWORD}; Initial Catalog=TableTennis; Min Pool Size=10; Max Pool Size=1024; Pooling=true; TrustServerCertificate=True"
     .Replace("${DB_IP}", dbIp)
-    .Replace("${DB_PASSWORD}", dbPassword);
+    .Replace("${DB_PASSWORD}", dbPassword)
+: databaseConfig.MsSqlConnection;
 
-// 打印替换后的连接字符串进行调试（请在生产环境中移除）
-Console.WriteLine($"Final Connection String: {connectionString}");
-
-
-Console.WriteLine($"databaseConfig.MsSqlConnection: {databaseConfig.MsSqlConnection}");
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<TableTennisContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(msSqlConnection));
 
 // Add service and repository to the container.
 builder.Services.AddScoped<IPlayerService, PlayerService>();
