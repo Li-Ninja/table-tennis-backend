@@ -16,17 +16,16 @@ Console.WriteLine($"Environment: {environmentName}");
 var databaseConfig = new DatabaseConfig();
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
+// NOTE: data from cloud build
 var dbIp = Environment.GetEnvironmentVariable("DB_IP") ?? "";
 var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
 
+builder.Configuration.GetSection("Database").Bind(databaseConfig);
 
-// TODO 在這個階段，應該要從 appsettings.json 讀取但都失敗，所以先改成判斷環境名稱然後寫死字串
-var msSqlConnection = environmentName == "GCP"
-? "Data Source=${DB_IP},1433; User ID=sa; Password=${DB_PASSWORD}; Initial Catalog=TableTennis; Min Pool Size=10; Max Pool Size=1024; Pooling=true; TrustServerCertificate=True"
+var msSqlConnection =
+    databaseConfig.MsSqlConnection
     .Replace("${DB_IP}", dbIp)
-    .Replace("${DB_PASSWORD}", dbPassword)
-: databaseConfig.MsSqlConnection;
-
+    .Replace("${DB_PASSWORD}", dbPassword);
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<TableTennisContext>(options =>
