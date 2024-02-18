@@ -40,9 +40,9 @@
     "gcp": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "swagger",
-      "applicationUrl": "https://*:7183;http://*:5231",
+      "applicationUrl": "http://*:8080",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "GCP"
       }

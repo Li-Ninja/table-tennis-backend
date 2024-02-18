@@ -1,0 +1,37 @@
+steps:
+    - name: "mcr.microsoft.com/dotnet/sdk:8.0"
+      entrypoint: "sh"
+      args:
+          - "-c"
+          - |
+              dotnet restore && dotnet build --configuration Release && dotnet publish -c Release -o /app/publish
+
+    - name: "gcr.io/cloud-builders/docker"
+      args:
+          [
+              "build",
+              "-t",
+              "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/$REPO_NAME:$SHORT_SHA",
+              "--build-arg=DB_IP=$_DB_IP",
+              "--build-arg=DB_PASSWORD=$_DB_PASSWORD",
+              ".",
+          ]
+
+    - name: "gcr.io/cloud-builders/docker"
+      args:
+          - push
+          - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/$REPO_NAME:$SHORT_SHA
+
+    - name: "gcr.io/cloud-builders/gcloud"
+      args:
+          - run
+          - deploy
+          - $REPO_NAME
+          - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/$REPO_NAME:$SHORT_SHA
+          - --region=${_REGION}
+          - --platform=managed
+          - --allow-unauthenticated
+
+substitutions:
+    _REGION: asia-east1
+    _REPOSITORY: ninja
