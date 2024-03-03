@@ -6,14 +6,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace table_tennis_backend.Database.MsSql.TableTennis.Model;
 
-[Table("Player")]
-public partial class Player
+[Table("PlayerScoreHistory")]
+public partial class PlayerScoreHistory
 {
     [Key]
     public int Id { get; set; }
 
-    [StringLength(50)]
-    public string Name { get; set; } = null!;
+    public int Result_Id { get; set; }
 
-    public int Score { get; set; }
+    public int Player_Id_A { get; set; }
+
+    public int Player_Id_B { get; set; }
+
+    public int InitialScore_A { get; set; }
+
+    public int InitialScore_B { get; set; }
 }

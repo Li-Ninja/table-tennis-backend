@@ -30,6 +30,9 @@ public partial class Result
 
     public int? ScoreB { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime? ResultDate { get; set; }
+
     [ForeignKey("Event_Id")]
     [InverseProperty("Result")]
     public virtual Event Event { get; set; } = null!;

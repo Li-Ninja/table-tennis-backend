@@ -19,9 +19,12 @@ public partial class TableTennisContext : DbContext
 
     public virtual DbSet<Player> Player { get; set; }
 
+    public virtual DbSet<PlayerScoreHistory> PlayerScoreHistory { get; set; }
+
     public virtual DbSet<Result> Result { get; set; }
 
     public virtual DbSet<ResultItem> ResultItem { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -54,7 +57,19 @@ public partial class TableTennisContext : DbContext
 
         modelBuilder.Entity<Event>(entity =>
         {
+            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.IsSingleMatch).HasDefaultValueSql("((1))");
+            entity.Property(e => e.Type).HasDefaultValueSql("((1))");
+        });
+
+        modelBuilder.Entity<Player>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+        });
+
+        modelBuilder.Entity<Result>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
         });
 
         OnModelCreatingPartial(modelBuilder);
