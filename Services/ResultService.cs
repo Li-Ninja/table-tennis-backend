@@ -49,10 +49,10 @@ public class ResultService : IResultService
     }
 
 
-    public async Task<List<GetResDto>> GetAllResult()
+    public async Task<List<GetResDto>> GetAllResult(GetAllReqDto req)
     {
 
-        var results = await _repository.ReadAllResult();
+        var results = await _repository.ReadAllResult(req.Event_Id, req.Event_Type);
         return results
         .OrderBy(r => r.Id)
         .Select(r => new GetResDto

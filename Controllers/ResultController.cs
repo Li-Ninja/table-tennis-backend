@@ -22,9 +22,9 @@ public class ResultController : ControllerBase
     // GET: api/Result
     [HttpGet]
     // TODO result and generic
-    public async Task<IActionResult> GetAllResultList()
+    public async Task<IActionResult> GetAllResultList([FromQuery] GetAllReqDto req)
     {
-        var result = await _service.GetAllResult();
+        var result = await _service.GetAllResult(req);
 
         return Ok(result);
     }

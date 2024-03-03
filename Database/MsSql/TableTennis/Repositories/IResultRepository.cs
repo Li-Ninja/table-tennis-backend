@@ -4,7 +4,7 @@ namespace table_tennis_backend.Database.MsSql.TableTennis.Repositories;
 public interface IResultRepository
 {
     Task CreateResult(IEnumerable<Result> result);
-    Task<IEnumerable<Result>> ReadAllResult();
+    Task<IEnumerable<Result>> ReadAllResult(int? event_id, int? eventType);
 
     Task<Result?> FindResultById(int id);
     Task<Result?> FindResultByOtherId(int event_id, int round, int roundIndex);

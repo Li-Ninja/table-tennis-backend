@@ -7,7 +7,7 @@ public interface IResultService
 {
     Task AddResult(AddReqDto[] req);
     Task<GetResDto?> GetResult(GetReqDto req);
-    Task<List<GetResDto>> GetAllResult();
+    Task<List<GetResDto>> GetAllResult(GetAllReqDto req);
     Task<GetResDto> GetResultByOtherId(int event_id, int round, int roundIndex);
     Task UpdateResult(UpdateReqDto req);
     Task DeleteResult(int id);

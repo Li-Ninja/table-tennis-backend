@@ -21,6 +21,8 @@ public partial class Event
     [Required]
     public bool IsSingleMatch { get; set; } = true;
 
+    public int Type { get; set; }
+
     [InverseProperty("Event")]
     public virtual ICollection<Result> Result { get; set; } = new List<Result>();
 }

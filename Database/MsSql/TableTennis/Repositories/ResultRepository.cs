@@ -17,9 +17,9 @@ public class ResultRepository : IResultRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<Result>> ReadAllResult()
+    public async Task<IEnumerable<Result>> ReadAllResult(int? eventId, int? eventType)
     {
-        return await _db.Result
+        var query = _db.Result
                         .Include(r => r.Event)
                         .Include(r => r.PlayerA1)
                         .Include(r => r.PlayerA2)
@@ -27,7 +27,19 @@ public class ResultRepository : IResultRepository
                         .Include(r => r.PlayerB2)
                         .OrderByDescending(r => r.Round)
                         .ThenBy(r => r.RoundIndex)
-                        .ToListAsync();
+                        .AsQueryable();
+
+        if (eventId.HasValue)
+        {
+            query = query.Where(r => r.Event_Id == eventId);
+        }
+
+        if (eventType.HasValue)
+        {
+            query = query.Where(r => r.Event.Type == eventType);
+        }
+
+        return await query.ToListAsync();
     }
 
 
