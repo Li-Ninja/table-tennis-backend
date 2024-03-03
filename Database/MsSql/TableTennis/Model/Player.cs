@@ -14,6 +14,5 @@ public partial class Player
 
     [StringLength(50)]
     public string Name { get; set; } = null!;
-
     public int Score { get; set; }
 }

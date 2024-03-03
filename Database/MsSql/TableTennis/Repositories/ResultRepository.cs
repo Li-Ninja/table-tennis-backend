@@ -99,4 +99,9 @@ public class ResultRepository : IResultRepository
             await _db.SaveChangesAsync();
         }
     }
+
+    public async Task<int> FindMaxResultId()
+    {
+        return await _db.Result.MaxAsync(r => (int?)r.Id) ?? 0;
+    }
 }

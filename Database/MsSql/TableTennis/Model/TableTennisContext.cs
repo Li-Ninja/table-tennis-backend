@@ -25,7 +25,6 @@ public partial class TableTennisContext : DbContext
 
     public virtual DbSet<ResultItem> ResultItem { get; set; }
 
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Result>(entity =>

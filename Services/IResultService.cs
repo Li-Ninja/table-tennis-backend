@@ -6,6 +6,7 @@ namespace table_tennis_backend.Services;
 public interface IResultService
 {
     Task AddResult(AddReqDto[] req);
+    Task AddResultRanking(AddRankingReqDto[] req);
     Task<GetResDto?> GetResult(GetReqDto req);
     Task<List<GetResDto>> GetAllResult(GetAllReqDto req);
     Task<GetResDto> GetResultByOtherId(int event_id, int round, int roundIndex);

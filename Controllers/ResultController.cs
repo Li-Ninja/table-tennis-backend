@@ -45,6 +45,22 @@ public class ResultController : ControllerBase
 
     }
 
+    // POST: api/Result/ResultRanking
+    [HttpPost("ResultRanking")]
+    public async Task<IActionResult> CreateRanking(AddRankingReqDto[] req)
+    {
+        if (!Auth.ValidateToken(HttpContext))
+        {
+            HttpContext.Response.StatusCode = 403;
+            return new JsonResult("");
+        }
+
+        await _service.AddResultRanking(req);
+
+        return Ok("success");
+
+    }
+
 
     // PUT: api/Result/
     [HttpPut]

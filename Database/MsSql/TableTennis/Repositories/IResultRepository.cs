@@ -11,4 +11,5 @@ public interface IResultRepository
     Task<IEnumerable<Result>> FindResultListByEventId(int event_id);
     Task UpdateResult(Result result);
     Task DeleteResult(int id);
+    Task<int> FindMaxResultId();
 }

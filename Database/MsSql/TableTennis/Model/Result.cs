@@ -32,6 +32,8 @@ public partial class Result
 
     [Column(TypeName = "datetime")]
     public DateTime? ResultDate { get; set; }
+    public int PlayerScoreA { get; set; }
+    public int PlayerScoreB { get; set; }
 
     [ForeignKey("Event_Id")]
     [InverseProperty("Result")]
