@@ -130,6 +130,7 @@ public class ResultService : IResultService
                 RoundIndex = 0,
                 Player_Id_A_1 = item.Player_Id_A_1,
                 Player_Id_B_1 = item.Player_Id_B_1,
+                ResultDate = item.ResultDate,
                 ScoreA = winsA,
                 ScoreB = winsB,
                 PlayerScoreA = scoreA,

@@ -19,6 +19,6 @@ public class AddRankingReqDto
     public required int Event_Id { get; set; }
     public int Player_Id_A_1 { get; set; }
     public int Player_Id_B_1 { get; set; }
-    public DateTime ResultDate { get; set; }
+    public string? ResultDate { get; set; }
     public ResultItemList[] ResultItemList { get; set; } = [];
 }

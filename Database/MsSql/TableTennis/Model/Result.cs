@@ -30,8 +30,7 @@ public partial class Result
 
     public int? ScoreB { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime? ResultDate { get; set; }
+    public string? ResultDate { get; set; }
     public int PlayerScoreA { get; set; }
     public int PlayerScoreB { get; set; }
 
