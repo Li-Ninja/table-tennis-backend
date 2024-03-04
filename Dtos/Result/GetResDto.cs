@@ -19,6 +19,7 @@ public class GetResDto
     public int? Player_Id_B_2 { get; set; }
     public int? ScoreA { get; set; }
     public int? ScoreB { get; set; }
+    public DateTime? ResultDate { get; set; }
 }
 
 

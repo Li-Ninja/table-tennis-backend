@@ -179,6 +179,7 @@ public class ResultService : IResultService
             Player_Id_B_2 = r.Player_Id_B_2,
             ScoreA = r.ScoreA,
             ScoreB = r.ScoreB,
+            ResultDate = r.ResultDate,
         }).ToList();
     }
 
