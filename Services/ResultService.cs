@@ -167,6 +167,8 @@ public class ResultService : IResultService
             Id = r.Id,
             Event_Id = r.Event_Id,
             Event_Name = r.Event.Name,
+            IsSingleMatch = r.Event.IsSingleMatch,
+            Round = r.Round,
             Player_NameA1 = r.PlayerA1?.Name,
             Player_NameA2 = r.PlayerA2?.Name,
             Player_NameB1 = r.PlayerB1?.Name,
