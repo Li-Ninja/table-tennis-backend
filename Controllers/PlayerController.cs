@@ -24,13 +24,6 @@ public class PlayerController : ControllerBase
     // TODO result and generic
     public async Task<IActionResult> GetAllPlayerList()
     {
-        if (!Auth.ValidateToken(HttpContext))
-        {
-            HttpContext.Response.StatusCode = 403;
-            return new JsonResult("");
-        }
-
-
         var players = await _service.GetAllPlayer();
         return Ok(players);
     }
