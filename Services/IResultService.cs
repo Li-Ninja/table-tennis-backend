@@ -9,6 +9,7 @@ public interface IResultService
     Task AddResultRanking(AddRankingReqDto[] req);
     Task<GetResDto?> GetResult(GetReqDto req);
     Task<List<GetResDto>> GetAllResult(GetAllReqDto req);
+    Task<List<GetRankingResDto>> GetResultRanking(GetAllReqDto req);
     Task<GetResDto> GetResultByOtherId(int event_id, int round, int roundIndex);
     Task UpdateResult(UpdateReqDto req);
     Task DeleteResult(int id);

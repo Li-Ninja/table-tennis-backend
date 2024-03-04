@@ -29,6 +29,15 @@ public class ResultController : ControllerBase
         return Ok(result);
     }
 
+    // GET: api/Result/ResultRanking
+    [HttpGet("ResultRanking")]
+    public async Task<IActionResult> GetAllResultRankingList([FromQuery] GetAllReqDto req)
+    {
+        var result = await _service.GetResultRanking(req);
+
+        return Ok(result);
+    }
+
     // POST: api/Result
     [HttpPost]
     public async Task<IActionResult> Create(AddReqDto[] req)

@@ -1,6 +1,7 @@
 
 using table_tennis_backend.Services;
 using table_tennis_backend.Dtos.Result;
+using ResultItemDto = table_tennis_backend.Dtos.ResultItem.GetResDto;
 using table_tennis_backend.Database.MsSql.TableTennis.Model;
 using table_tennis_backend.Database.MsSql.TableTennis.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -166,9 +167,6 @@ public class ResultService : IResultService
             Id = r.Id,
             Event_Id = r.Event_Id,
             Event_Name = r.Event.Name,
-            IsSingleMatch = r.Event.IsSingleMatch,
-            Round = r.Round,
-            RoundIndex = r.RoundIndex,
             Player_NameA1 = r.PlayerA1?.Name,
             Player_NameA2 = r.PlayerA2?.Name,
             Player_NameB1 = r.PlayerB1?.Name,
@@ -210,6 +208,42 @@ public class ResultService : IResultService
             ScoreB = result.ScoreB,
         };
     }
+
+    public async Task<List<GetRankingResDto>> GetResultRanking(GetAllReqDto req)
+    {
+        var results = await _repository.ReadAllResult(req.Event_Id, req.Event_Type);
+
+        var allResultItemList = await _repository_result_item.ReadAllResultItem();
+
+        var rankings = results.Select(r => new GetRankingResDto
+        {
+            Id = r.Id,
+            Event_Id = r.Event_Id,
+            Event_Name = r.Event.Name,
+            Player_NameA1 = r.PlayerA1?.Name,
+            Player_NameB1 = r.PlayerB1?.Name,
+            Player_Id_A_1 = r.Player_Id_A_1,
+            Player_Id_B_1 = r.Player_Id_B_1,
+            ScoreA = r.ScoreA,
+            ScoreB = r.ScoreB,
+            ResultDate = r.ResultDate,
+            ResultItemList = allResultItemList
+                .Where(ri => ri.Result_Id == r.Id)
+                .Select(ri => new ResultItemDto
+                {
+                    Result_Id = ri.Result_Id,
+                    MatchIndex = ri.MatchIndex,
+                    ScoreA = ri.ScoreA,
+                    ScoreB = ri.ScoreB
+                }).ToList()
+        })
+        .OrderBy(r => r.ResultDate)
+        .ToList();
+
+        return rankings;
+    }
+
+
 
     public async Task<GetResDto> GetResultByOtherId(int event_id, int round, int roundIndex)
     {
