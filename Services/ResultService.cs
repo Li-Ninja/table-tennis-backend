@@ -111,6 +111,7 @@ public class ResultService : IResultService
 
             playerScoreHistory.Add(new PlayerScoreHistory
             {
+                Result_Id = maxResultId,
                 Player_Id_A = item.Player_Id_A_1,
                 Player_Id_B = item.Player_Id_B_1,
                 InitialScore_A = playerAScore,
@@ -133,11 +134,24 @@ public class ResultService : IResultService
                 PlayerScoreA = scoreA,
                 PlayerScoreB = scoreB
             });
-        }
 
+            var playerAToModify = playerList.FirstOrDefault(player => player.Id == item.Player_Id_A_1);
+            var playerBToModify = playerList.FirstOrDefault(player => player.Id == item.Player_Id_B_1);
+
+            if (playerAToModify != null)
+            {
+                playerAToModify.Score = scoreA;
+            }
+
+            if (playerBToModify != null)
+            {
+                playerBToModify.Score = scoreB;
+            }
+        }
         await _repository.CreateResult(result);
         await _repository_result_item.CreateResultItem(resultItem);
         await _repository_playerScoreHistory.CreatePlayerScore(playerScoreHistory);
+        await _repository_player.UpdatePlayers(playerList);
         return;
     }
 
@@ -290,7 +304,7 @@ public class ResultService : IResultService
             }
             else if (winner == 'B')
             {
-                scoreAChange += scoreB > scoreA ? scoreRule.HighWinPoints : scoreRule.LowWinPoints;
+                scoreAChange -= scoreB > scoreA ? scoreRule.HighWinPoints : scoreRule.LowWinPoints;
                 scoreBChange += scoreB > scoreA ? scoreRule.HighWinPoints : scoreRule.LowWinPoints;
             }
 

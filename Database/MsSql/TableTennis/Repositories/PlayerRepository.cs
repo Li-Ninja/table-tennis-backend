@@ -32,4 +32,14 @@ public class PlayerRepository : IPlayerRepository
         _db.Player.Update(player);
         await _db.SaveChangesAsync();
     }
+
+    public async Task UpdatePlayers(List<Player> playersToUpdate)
+    {
+        foreach (var player in playersToUpdate)
+        {
+            _db.Entry(player).State = EntityState.Modified;
+        }
+        await _db.SaveChangesAsync();
+    }
+
 }

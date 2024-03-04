@@ -7,4 +7,5 @@ public interface IPlayerRepository
     Task<List<Player>> ReadAllPlayer();
     Task<Player?> FindPlayerById(int id);
     Task UpdatePlayer(Player player);
+    Task UpdatePlayers(List<Player> playersToUpdate);
 }
