@@ -6,6 +6,6 @@ namespace table_tennis_backend.Services;
 public interface IPlayerService
 {
     Task AddPlayer(AddReqDto[] req);
-    Task<List<Player>> GetAllPlayer();
+    Task<List<GetAllResDto>> GetAllPlayer();
     Task UpdatePlayer(UpdateReqDto req);
 }
