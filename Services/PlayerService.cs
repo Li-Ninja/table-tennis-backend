@@ -4,20 +4,19 @@ using table_tennis_backend.Dtos.Player;
 using table_tennis_backend.Database.MsSql.TableTennis.Model;
 using table_tennis_backend.Database.MsSql.TableTennis.Repositories;
 using Microsoft.EntityFrameworkCore;
-using ResultGetAllReqDto = table_tennis_backend.Dtos.Result.GetAllReqDto;
 
 
 
 public class PlayerService : IPlayerService
 {
     private readonly IPlayerRepository _repository;
-    private readonly IResultService _resultService;
+    private readonly IResultRepository _resultRepository;
 
 
-    public PlayerService(IPlayerRepository repository, IResultService resultService)
+    public PlayerService(IPlayerRepository repository, IResultRepository resultRepository)
     {
         _repository = repository;
-        _resultService = resultService;
+        _resultRepository = resultRepository;
     }
 
     public async Task AddPlayer(AddReqDto[] req)
@@ -32,11 +31,8 @@ public class PlayerService : IPlayerService
     public async Task<List<GetAllResDto>> GetAllPlayer()
     {
         var playerList = await _repository.ReadAllPlayer();
-        var result = await _resultService.GetAllResult(new ResultGetAllReqDto
-        {
-            // TODO create enum
-            Event_Type = 3
-        });
+        // TODO create 3's enum
+        var result = await _resultRepository.ReadAllResult(null, 3);
 
         return playerList.Select(r => new GetAllResDto
         {
