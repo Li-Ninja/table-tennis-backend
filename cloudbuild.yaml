@@ -13,6 +13,7 @@ steps:
               "-t",
               "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/$REPO_NAME:$SHORT_SHA",
               "--build-arg=DB_IP=$_DB_IP",
+              "--build-arg=DB_USER=$_DB_USER",
               "--build-arg=DB_PASSWORD=$_DB_PASSWORD",
               ".",
           ]
