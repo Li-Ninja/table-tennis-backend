@@ -30,7 +30,7 @@ public partial class Result
 
     public int? ScoreB { get; set; }
 
-    public string? ResultDate { get; set; }
+    public DateTimeOffset ResultDateTime { get; set; }
     public int PlayerScoreA { get; set; }
     public int PlayerScoreB { get; set; }
 

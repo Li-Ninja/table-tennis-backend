@@ -59,11 +59,7 @@ public class ResultService : IResultService
 
     public async Task AddResultRanking(AddRankingReqDto[] req)
     {
-        // 如果 ResultDate 是 DateTime 类型
-        var sortedReq = req.OrderBy(item => item.ResultDate).ToArray();
-
-        // 如果 ResultDate 是字符串类型，假设它总是有效的日期格式
-        // var sortedReq = req.OrderBy(item => DateTime.Parse(item.ResultDate)).ToArray();
+        var sortedReq = req.OrderBy(item => item.ResultDateTime).ToArray();
 
         var playerList = await _repository_player.ReadAllPlayer();
 
@@ -130,7 +126,7 @@ public class ResultService : IResultService
                 RoundIndex = 0,
                 Player_Id_A_1 = item.Player_Id_A_1,
                 Player_Id_B_1 = item.Player_Id_B_1,
-                ResultDate = item.ResultDate,
+                ResultDateTime = item.ResultDateTime,
                 ScoreA = winsA,
                 ScoreB = winsB,
                 PlayerScoreA = scoreA,
@@ -180,7 +176,7 @@ public class ResultService : IResultService
             Player_Id_B_2 = r.Player_Id_B_2,
             ScoreA = r.ScoreA,
             ScoreB = r.ScoreB,
-            ResultDate = r.ResultDate,
+            ResultDateTime = r.ResultDateTime,
         }).ToList();
     }
 
@@ -230,7 +226,7 @@ public class ResultService : IResultService
             Player_Id_B_1 = r.Player_Id_B_1,
             ScoreA = r.ScoreA,
             ScoreB = r.ScoreB,
-            ResultDate = r.ResultDate,
+            ResultDateTime = r.ResultDateTime,
             ResultItemList = allResultItemList
                 .Where(ri => ri.Result_Id == r.Id)
                 .Select(ri => new ResultItemDto
@@ -241,7 +237,7 @@ public class ResultService : IResultService
                     ScoreB = ri.ScoreB
                 }).ToList()
         })
-        .OrderBy(r => r.ResultDate)
+        .OrderBy(r => r.ResultDateTime)
         .ToList();
 
         return rankings;
