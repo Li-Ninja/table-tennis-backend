@@ -9,4 +9,5 @@ public class GetAllReqDto
     public int? Event_Id { get; set; }
 
     public int? Event_Type { get; set; }
+    public DateTimeOffset ResultDate { get; set; }
 }
