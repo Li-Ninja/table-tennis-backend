@@ -5,4 +5,5 @@ public class GetAllResDto
     public required string Name { get; set; }
     public int Score { get; set; }
     public int ResultCount { get; set; }
+    public int WinningCount { get; set; }
 }

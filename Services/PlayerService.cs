@@ -43,8 +43,19 @@ public class PlayerService : IPlayerService
             {
                 IdA = r.Player_Id_A_1,
                 IdB = r.Player_Id_B_1
-            })
-                .Where(ri => ri.IdA == r.Id || ri.IdB == r.Id).Count()
+            }).Where(ri => ri.IdA == r.Id || ri.IdB == r.Id).Count(),
+            WinningCount = result.Select(r => new
+            {
+                IdA = r.Player_Id_A_1,
+                ScoreA = r.ScoreA,
+                ScoreB = r.ScoreB
+            }).Where(ri => ri.IdA == r.Id && ri.ScoreA > ri.ScoreB).Count()
+                + result.Select(r => new
+                {
+                    IdB = r.Player_Id_B_1,
+                    ScoreA = r.ScoreA,
+                    ScoreB = r.ScoreB
+                }).Where(ri => ri.IdB == r.Id && ri.ScoreB > ri.ScoreA).Count()
         }).ToList();
     }
 
