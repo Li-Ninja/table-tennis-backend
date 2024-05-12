@@ -140,12 +140,14 @@ public class ResultService : IResultService
             {
                 playerAToModify.Score = scoreA;
                 playerAToModify.UpdateDateTime = DateTimeOffset.UtcNow;
+                playerAToModify.LatestResultDateTime = item.ResultDateTime;
             }
 
             if (playerBToModify != null)
             {
                 playerBToModify.Score = scoreB;
                 playerBToModify.UpdateDateTime = DateTimeOffset.UtcNow;
+                playerBToModify.LatestResultDateTime = item.ResultDateTime;
             }
         }
         await _repository.CreateResult(result);

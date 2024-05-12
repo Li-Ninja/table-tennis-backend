@@ -7,5 +7,5 @@ public class GetAllResDto
     public int ResultCount { get; set; }
     public int WinningCount { get; set; }
     public DateTimeOffset? UpdateDateTime { get; set; }
-
+    public DateTimeOffset? LatestResultDateTime { get; set; }
 }

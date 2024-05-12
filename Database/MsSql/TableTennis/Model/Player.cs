@@ -16,4 +16,5 @@ public partial class Player
     public string Name { get; set; } = null!;
     public int Score { get; set; }
     public DateTimeOffset? UpdateDateTime { get; set; }
+    public DateTimeOffset? LatestResultDateTime { get; set; }
 }

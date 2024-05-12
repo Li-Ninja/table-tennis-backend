@@ -56,7 +56,8 @@ public class PlayerService : IPlayerService
                     ScoreA = r.ScoreA,
                     ScoreB = r.ScoreB
                 }).Where(ri => ri.IdB == r.Id && ri.ScoreB > ri.ScoreA).Count(),
-            UpdateDateTime = r.UpdateDateTime
+            UpdateDateTime = r.UpdateDateTime,
+            LatestResultDateTime = r.LatestResultDateTime
         }).ToList();
     }
 
