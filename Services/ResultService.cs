@@ -139,11 +139,13 @@ public class ResultService : IResultService
             if (playerAToModify != null)
             {
                 playerAToModify.Score = scoreA;
+                playerAToModify.UpdateDateTime = DateTimeOffset.UtcNow;
             }
 
             if (playerBToModify != null)
             {
                 playerBToModify.Score = scoreB;
+                playerBToModify.UpdateDateTime = DateTimeOffset.UtcNow;
             }
         }
         await _repository.CreateResult(result);

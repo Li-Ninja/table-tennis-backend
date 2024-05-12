@@ -6,4 +6,6 @@ public class GetAllResDto
     public int Score { get; set; }
     public int ResultCount { get; set; }
     public int WinningCount { get; set; }
+    public DateTimeOffset? UpdateDateTime { get; set; }
+
 }
