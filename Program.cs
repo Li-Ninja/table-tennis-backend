@@ -18,6 +18,7 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 // NOTE: data from cloud build
 var dbIp = Environment.GetEnvironmentVariable("DB_IP") ?? "";
+var dbPort = Environment.GetEnvironmentVariable("DB_PORT") ?? "";
 var dbUser = Environment.GetEnvironmentVariable("DB_USER") ?? "";
 var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
 
@@ -26,6 +27,7 @@ builder.Configuration.GetSection("Database").Bind(databaseConfig);
 var msSqlConnection =
     databaseConfig.MsSqlConnection
     .Replace("${DB_IP}", dbIp)
+    .Replace("${DB_PORT}", dbPort)
     .Replace("${DB_USER}", dbUser)
     .Replace("${DB_PASSWORD}", dbPassword);
 
