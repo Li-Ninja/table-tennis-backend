@@ -17,7 +17,7 @@ public class ResultRepository : IResultRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<Result>> ReadAllResult(int? eventId, int? eventType, DateTimeOffset? startDate, DateTimeOffset? endDate)
+    public async Task<IEnumerable<Result>> ReadAllResult(int? eventId, int? eventType, DateTimeOffset? startDate, DateTimeOffset? endDate, int? player_Id_A_1, int? player_Id_B_1)
     {
         var query = _db.Result
                         .Include(r => r.Event)
@@ -51,6 +51,15 @@ public class ResultRepository : IResultRepository
             query = query.Where(r => r.ResultDateTime >= utcDateStart && r.ResultDateTime < utcDateEnd);
         }
 
+        if (player_Id_A_1.HasValue)
+        {
+            query = query.Where(r => r.Player_Id_A_1 == player_Id_A_1 || r.Player_Id_B_1 == player_Id_A_1);
+        }
+
+        if (player_Id_B_1.HasValue)
+        {
+            query = query.Where(r => r.Player_Id_A_1 == player_Id_B_1 || r.Player_Id_B_1 == player_Id_B_1);
+        }
 
         return await query.ToListAsync();
     }

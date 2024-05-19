@@ -32,7 +32,7 @@ public class PlayerService : IPlayerService
     {
         var playerList = await _repository.ReadAllPlayer();
         // TODO create 3's enum
-        var result = await _resultRepository.ReadAllResult(null, 3, null, null);
+        var result = await _resultRepository.ReadAllResult(null, 3, null, null, null, null);
 
         return playerList.Select(r => new GetAllResDto
         {

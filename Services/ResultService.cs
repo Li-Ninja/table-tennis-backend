@@ -160,7 +160,7 @@ public class ResultService : IResultService
     public async Task<List<GetResDto>> GetAllResult(GetAllReqDto req)
     {
 
-        var results = await _repository.ReadAllResult(req.Event_Id, req.Event_Type, req.StartDate, req.EndDate);
+        var results = await _repository.ReadAllResult(req.Event_Id, req.Event_Type, req.StartDate, req.EndDate, req.Player_Id_A_1, req.Player_Id_B_1);
         return results
         .OrderBy(r => r.Id)
         .Select(r => new GetResDto
@@ -215,7 +215,7 @@ public class ResultService : IResultService
 
     public async Task<List<GetRankingResDto>> GetResultRanking(GetAllReqDto req)
     {
-        var results = await _repository.ReadAllResult(req.Event_Id, req.Event_Type, req.StartDate, req.EndDate);
+        var results = await _repository.ReadAllResult(req.Event_Id, req.Event_Type, req.StartDate, req.EndDate, req.Player_Id_A_1, req.Player_Id_B_1);
 
         var allResultItemList = await _repository_result_item.ReadAllResultItem();
 
