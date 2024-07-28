@@ -27,7 +27,7 @@ jobs:
               uses: actions/upload-artifact@v2
               with:
                   name: net-publish
-                  path: /publish
+                  path: ./publish
 
     docker-image:
         needs: build
@@ -40,7 +40,7 @@ jobs:
               uses: actions/download-artifact@v2
               with:
                   name: net-publish
-                  path: /app/publish
+                  path: ./publish
 
             - name: Set up Docker
               uses: docker/setup-buildx-action@v1
