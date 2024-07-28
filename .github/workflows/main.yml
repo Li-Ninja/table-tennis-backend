@@ -1,102 +1,82 @@
 name: CI/CD Pipeline
 
 on:
-  push:
-    tags:
-      - '*'
-    # branches:
-    #   - 'main'
+    push:
+        tags:
+            - "*"
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '20.9.0'
+            - name: Set up .NET
+              uses: actions/setup-dotnet@v1
+              with:
+                  dotnet-version: "8.0"
 
-      - name: Cache Yarn dependencies
-        uses: actions/cache@v2
-        with:
-          path: .yarn/cache
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+            - name: Build and publish .NET application
+              run: |
+                  dotnet restore "table-tennis-backend.csproj"
+                  dotnet build "table-tennis-backend.csproj" --no-restore
+                  dotnet publish "table-tennis-backend.csproj" -c Release -o /app/publish
 
-      - name: Install dependencies
-        run: yarn install
+            - name: Upload build artifacts
+              uses: actions/upload-artifact@v2
+              with:
+                  name: net-publish
+                  path: /app/publish
 
-      - name: Build and list output
-        run: |
-          yarn build
-          ls -lR
-          pwd
-          echo "Listing contents of current directory"
-          ls -al
+    docker-image:
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: next-artifacts
-          path: .next
-          retention-days: 15
+            - name: Download build artifacts
+              uses: actions/download-artifact@v2
+              with:
+                  name: net-publish
+                  path: /app/publish
 
-  docker-image:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+            - name: Set up Docker
+              uses: docker/setup-buildx-action@v1
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: next-artifacts
-          path: .next
+            - name: Log in to GitHub Container Registry
+              uses: docker/login-action@v1
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v1
+            - name: Build and push Docker images
+              uses: docker/build-push-action@v2
+              with:
+                  context: .
+                  file: ./Dockerfile
+                  push: true
+                  tags: |
+                      ghcr.io/li-ninja/table-tennis-backend:${{ github.sha }}
+                      ghcr.io/li-ninja/table-tennis-backend:latest
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+    deploy:
+        needs: docker-image
+        runs-on: ubuntu-latest
+        steps:
+            - name: Set up SSH
+              uses: webfactory/ssh-agent@v0.5.3
+              with:
+                  ssh-private-key: ${{ secrets.GCP_PRIVATE_KEY }}
 
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          tags: |
-            ghcr.io/li-ninja/table-tennis:${{ github.sha }}
-            ghcr.io/li-ninja/table-tennis:latest
-
-  deploy:
-    needs: docker-image
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Check current directory and list files
-        run: |
-          pwd
-          ls -la
-
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.GCP_PRIVATE_KEY }}
-
-      - name: Deploy to server
-        run: |
-          scp -o StrictHostKeyChecking=no ./docker-compose.yml ${{ secrets.GCP_USER }}@${{ secrets.GCP_SERVER }}:/home/${{ secrets.GCP_USER }}
-          ssh -o StrictHostKeyChecking=no ${{ secrets.GCP_USER }}@${{ secrets.GCP_SERVER }} << EOF
-          docker-compose up -d --no-deps --build table-tennis
-          EOF
+            - name: Deploy to server
+              run: |
+                  scp -o StrictHostKeyChecking=no ./docker-compose.yml ${{ secrets.GCP_USER }}@${{ secrets.GCP_SERVER }}:/home/${{ secrets.GCP_USER }} "\
+                  ssh -o StrictHostKeyChecking=no ${{ secrets.GCP_USER }}@${{ secrets.GCP_SERVER }} "\
+                  DB_IP=${{ secrets.DB_IP }} \
+                  DB_PORT=${{ secrets.DB_PORT }} \
+                  DB_USER=${{ secrets.DB_USER }} \
+                  DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+                  docker-compose up -d --no-deps --build table-tennis-backend"
