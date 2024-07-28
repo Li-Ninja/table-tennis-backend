@@ -71,9 +71,12 @@ jobs:
               with:
                   ssh-private-key: ${{ secrets.GCP_PRIVATE_KEY }}
 
-            - name: Deploy to server
+            - name: Copy docker-compose file
               run: |
                   scp -o StrictHostKeyChecking=no ./docker-compose.yml ${{ secrets.GCP_USER }}@${{ secrets.GCP_SERVER }}:/home/${{ secrets.GCP_USER }}
+
+            - name: Deploy to server
+              run: |
                   ssh -o StrictHostKeyChecking=no ${{ secrets.GCP_USER }}@${{ secrets.GCP_SERVER }} "\
                   export DB_IP=${{ secrets.DB_IP }} && \
                   export DB_PORT=${{ secrets.DB_PORT }} && \
