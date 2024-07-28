@@ -16,6 +16,14 @@ services:
       #  set same network as the nginx service
       - my-network
 
+  ninja-sql:
+      image: your-db-image
+      ports:
+        - "5601:1433"
+      networks:
+        #  set same network as the nginx service
+        - my-network
+
 networks:
   my-network:
     external: true
