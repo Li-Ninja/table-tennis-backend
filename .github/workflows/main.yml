@@ -75,8 +75,8 @@ jobs:
               run: |
                   scp -o StrictHostKeyChecking=no ./docker-compose.yml ${{ secrets.GCP_USER }}@${{ secrets.GCP_SERVER }}:/home/${{ secrets.GCP_USER }} "\
                   ssh -o StrictHostKeyChecking=no ${{ secrets.GCP_USER }}@${{ secrets.GCP_SERVER }} "\
-                  DB_IP=${{ secrets.DB_IP }} \
-                  DB_PORT=${{ secrets.DB_PORT }} \
-                  DB_USER=${{ secrets.DB_USER }} \
-                  DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+                  export DB_IP=${{ secrets.DB_IP }}; \
+                  export DB_PORT=${{ secrets.DB_PORT }}; \
+                  export DB_USER=${{ secrets.DB_USER }}; \
+                  export DB_PASSWORD=${{ secrets.DB_PASSWORD }}; \
                   docker-compose up -d --no-deps --build table-tennis-backend"
