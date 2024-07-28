@@ -21,13 +21,13 @@ jobs:
               run: |
                   dotnet restore "table-tennis-backend.csproj"
                   dotnet build "table-tennis-backend.csproj" --no-restore
-                  dotnet publish "table-tennis-backend.csproj" -c Release -o /app/publish
+                  dotnet publish "table-tennis-backend.csproj" -c Release -o ./publish
 
             - name: Upload build artifacts
               uses: actions/upload-artifact@v2
               with:
                   name: net-publish
-                  path: /app/publish
+                  path: /publish
 
     docker-image:
         needs: build
