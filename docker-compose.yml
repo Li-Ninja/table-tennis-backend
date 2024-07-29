@@ -17,6 +17,7 @@ services:
       - my-network
 
   ninja-sql:
+      image: ninja-sql
       ports:
         - "5601:1433"
       networks:
