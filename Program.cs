@@ -9,9 +9,6 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 var environmentName = builder.Environment.EnvironmentName;
-
-Console.WriteLine($"Environment: {environmentName}");
-
 // Add DbContext registration
 var databaseConfig = new DatabaseConfig();
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -23,10 +20,6 @@ var dbUser = Environment.GetEnvironmentVariable("DB_USER") ?? "";
 var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
 
 builder.Configuration.GetSection("Database").Bind(databaseConfig);
-
-Console.WriteLine($"DB IP: {dbIp}");
-Console.WriteLine($"DB Port: {dbPort}");
-Console.WriteLine($"DB User: {dbUser}");
 
 var msSqlConnection =
     databaseConfig.MsSqlConnection
@@ -85,6 +78,15 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 var app = builder.Build();
 
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+
+logger.LogInformation($"Environment: {environmentName}");
+logger.LogInformation($"DB IP: {dbIp}");
+logger.LogInformation($"DB Port: {dbPort}");
+logger.LogInformation($"DB User: {dbUser}");
+
+logger.LogInformation("Begin connection DB.");
+
 // Test database connection
 using (var scope = app.Services.CreateScope())
 {
@@ -93,11 +95,11 @@ using (var scope = app.Services.CreateScope())
     try
     {
         dbContext.Database.OpenConnection();
-        Console.WriteLine("Successfully connected to the database.");
+        logger.LogInformation("Successfully connected to the database.");
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Failed to connect to the database: {ex.Message}");
+        logger.LogError(ex, "Failed to connect to the database.");
     }
     finally
     {
