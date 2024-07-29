@@ -1,36 +1,21 @@
 version: "3.3"
 
 services:
-  frontend:
-    image: ${FRONTEND_IMAGE_NAME}
+  table-tennis-backend:
+    image: ghcr.io/li-ninja/table-tennis-backend:latest
     ports:
-      - 80:8080
+      - 5652:8080
     restart: always
+    container_name: ninja-table-tennis-backend
+    environment:
+        DB_IP: ${DB_IP}
+        DB_PORT: ${DB_PORT}
+        DB_USER: ${DB_USER}
+        DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      #  set same network as the nginx service
+      - my-network
 
-  backend:
-    image: ${BACKEND_IMAGE_NAME}
-    ports:
-      - 3000:3000
-    restart: always
-    volumes:
-      - ./.env.backend:/app/.env:ro
-
-  ttFrontend:
-    image: ${TT_FRONTEND_IMAGE_NAME}
-    ports:
-      - 81:9000
-    restart: always
-
-  ttAdminFrontend:
-    image: ${TT_ADMIN_FRONTEND_IMAGE_NAME}
-    ports:
-      - 82:9001
-    restart: always
-
-  ttBackend:
-    image: ${TT_BACKEND_IMAGE_NAME}
-    ports:
-      - 83:8080
-    links:
-      - db:db
-    restart: always
+networks:
+  my-network:
+    external: true

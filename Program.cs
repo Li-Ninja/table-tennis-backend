@@ -9,9 +9,6 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 var environmentName = builder.Environment.EnvironmentName;
-
-Console.WriteLine($"Environment: {environmentName}");
-
 // Add DbContext registration
 var databaseConfig = new DatabaseConfig();
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -80,6 +77,35 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 var app = builder.Build();
+
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+
+logger.LogInformation($"Environment: {environmentName}");
+logger.LogInformation($"DB IP: {dbIp}");
+logger.LogInformation($"DB Port: {dbPort}");
+logger.LogInformation($"DB User: {dbUser}");
+
+logger.LogInformation("Begin connection DB.");
+
+// Test database connection
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<TableTennisContext>();
+
+    try
+    {
+        dbContext.Database.OpenConnection();
+        logger.LogInformation("Successfully connected to the database.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Failed to connect to the database.");
+    }
+    finally
+    {
+        dbContext.Database.CloseConnection();
+    }
+}
 
 // Configure the HTTP request pipeline.
 
