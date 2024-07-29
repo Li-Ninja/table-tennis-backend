@@ -24,6 +24,10 @@ var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
 
 builder.Configuration.GetSection("Database").Bind(databaseConfig);
 
+Console.WriteLine($"DB IP: {dbIp}");
+Console.WriteLine($"DB Port: {dbPort}");
+Console.WriteLine($"DB User: {dbUser}");
+
 var msSqlConnection =
     databaseConfig.MsSqlConnection
     .Replace("${DB_IP}", dbIp)
@@ -80,6 +84,26 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 var app = builder.Build();
+
+// Test database connection
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<TableTennisContext>();
+
+    try
+    {
+        dbContext.Database.OpenConnection();
+        Console.WriteLine("Successfully connected to the database.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Failed to connect to the database: {ex.Message}");
+    }
+    finally
+    {
+        dbContext.Database.CloseConnection();
+    }
+}
 
 // Configure the HTTP request pipeline.
 
