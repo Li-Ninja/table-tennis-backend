@@ -85,4 +85,5 @@ jobs:
                   export DB_PORT=\"${{ secrets.DB_PORT }}\" && \
                   export DB_USER=\"${{ secrets.DB_USER }}\" && \
                   export DB_PASSWORD=\"${{ secrets.DB_PASSWORD }}\" && \
-                  docker-compose up -d --no-deps --build table-tennis-backend"
+                  docker-compose pull && \
+                  docker-compose up -d --no-deps --build --force-recreate"
