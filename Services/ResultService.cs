@@ -324,7 +324,7 @@ public class ResultService : IResultService
             (155, 185, 4, 39),
             (186, 216, 3, 51),
             (217, 247, 2, 65),
-            (247, int.MaxValue, 2, 1), // 範圍247以上，高分獲勝+1，低分獲勝+81
+            (247, int.MaxValue, 1, 81), // 範圍247以上，高分獲勝+1，低分獲勝+81
         };
 
         public (int, int) UpdateScores(int scoreA, int scoreB, char winner)
