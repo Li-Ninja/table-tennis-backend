@@ -60,6 +60,11 @@ public class PlayerService : IPlayerService
                 Id = r.Id,
                 Name = r.Name,
                 Score = r.Score,
+                IsMan = r.IsMan,
+                IsRightHand = r.IsRightHand,
+                RacketType = r.RacketType,
+                ForehandRubberType = r.ForehandRubberType,
+                BackhandRubberType = r.BackhandRubberType,
                 Rank = currentRank,
                 ResultCount = result.Select(r => new
                 {
