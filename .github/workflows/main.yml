@@ -86,4 +86,5 @@ jobs:
                   export DB_USER=\"${{ secrets.DB_USER }}\" && \
                   export DB_PASSWORD=\"${{ secrets.DB_PASSWORD }}\" && \
                   docker-compose pull && \
-                  docker-compose up -d --no-deps --build --force-recreate"
+                  docker-compose up -d --no-deps --build --force-recreate &&\
+                  docker image prune -f"
