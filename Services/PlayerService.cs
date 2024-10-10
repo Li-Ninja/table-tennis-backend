@@ -33,31 +33,59 @@ public class PlayerService : IPlayerService
         var playerList = await _repository.ReadAllPlayer();
         // TODO create 3's enum
         var result = await _resultRepository.ReadAllResult(null, 3, null, null, null, null);
+        var sortedPlayerList = playerList.OrderByDescending(p => p.Score).ToList();
 
-        return playerList.Select(r => new GetAllResDto
+        int currentRank = 1;
+        int previousScore = -1;
+        int skipCount = 0;
+
+
+        return sortedPlayerList.Select(r =>
         {
-            Id = r.Id,
-            Name = r.Name,
-            Score = r.Score,
-            ResultCount = result.Select(r => new
+
+            if (r.Score != previousScore)
             {
-                IdA = r.Player_Id_A_1,
-                IdB = r.Player_Id_B_1
-            }).Where(ri => ri.IdA == r.Id || ri.IdB == r.Id).Count(),
-            WinningCount = result.Select(r => new
+                currentRank += skipCount;
+                skipCount = 1;
+            }
+            else
             {
-                IdA = r.Player_Id_A_1,
-                ScoreA = r.ScoreA,
-                ScoreB = r.ScoreB
-            }).Where(ri => ri.IdA == r.Id && ri.ScoreA > ri.ScoreB).Count()
+                skipCount++;
+            }
+
+            previousScore = r.Score;
+
+            return new GetAllResDto
+            {
+                Id = r.Id,
+                Name = r.Name,
+                Score = r.Score,
+                IsMan = r.IsMan,
+                IsRightHand = r.IsRightHand,
+                RacketType = r.RacketType,
+                ForehandRubberType = r.ForehandRubberType,
+                BackhandRubberType = r.BackhandRubberType,
+                Rank = currentRank,
+                ResultCount = result.Select(r => new
+                {
+                    IdA = r.Player_Id_A_1,
+                    IdB = r.Player_Id_B_1
+                }).Where(ri => ri.IdA == r.Id || ri.IdB == r.Id).Count(),
+                WinningCount = result.Select(r => new
+                {
+                    IdA = r.Player_Id_A_1,
+                    ScoreA = r.ScoreA,
+                    ScoreB = r.ScoreB
+                }).Where(ri => ri.IdA == r.Id && ri.ScoreA > ri.ScoreB).Count()
                 + result.Select(r => new
                 {
                     IdB = r.Player_Id_B_1,
                     ScoreA = r.ScoreA,
                     ScoreB = r.ScoreB
                 }).Where(ri => ri.IdB == r.Id && ri.ScoreB > ri.ScoreA).Count(),
-            UpdateDateTime = r.UpdateDateTime,
-            LatestResultDateTime = r.LatestResultDateTime
+                UpdateDateTime = r.UpdateDateTime,
+                LatestResultDateTime = r.LatestResultDateTime
+            };
         }).ToList();
     }
 
