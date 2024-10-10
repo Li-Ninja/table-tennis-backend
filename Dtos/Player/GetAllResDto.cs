@@ -11,7 +11,7 @@ public class GetAllResDto
     public RacketTypeEnum RacketType { get; set; }
     public RubberTypeEnum ForehandRubberType { get; set; }
     public RubberTypeEnum BackhandRubberType { get; set; }
-    public int Rank { get; set; }
+    public int? Rank { get; set; }
     public int ResultCount { get; set; }
     public int WinningCount { get; set; }
     public DateTimeOffset? UpdateDateTime { get; set; }

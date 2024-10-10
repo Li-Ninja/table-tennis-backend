@@ -35,22 +35,27 @@ public class PlayerService : IPlayerService
         var result = await _resultRepository.ReadAllResult(null, 3, null, null, null, null);
         var sortedPlayerList = playerList.OrderByDescending(p => p.Score).ToList();
 
-        int currentRank = 1;
+        int? currentRank = 1;
         int previousScore = -1;
         int skipCount = 0;
-
+        DateTimeOffset twoMonthsAgo = DateTimeOffset.Now.AddMonths(-2);
 
         return sortedPlayerList.Select(r =>
         {
+            int? rank = null;
 
-            if (r.Score != previousScore)
+            if (r.LatestResultDateTime != null && r.LatestResultDateTime >= twoMonthsAgo)
             {
-                currentRank += skipCount;
-                skipCount = 1;
-            }
-            else
-            {
-                skipCount++;
+                if (r.Score != previousScore)
+                {
+                    currentRank += skipCount;
+                    skipCount = 1;
+                }
+                else
+                {
+                    skipCount++;
+                }
+                rank = currentRank;
             }
 
             previousScore = r.Score;
@@ -65,7 +70,7 @@ public class PlayerService : IPlayerService
                 RacketType = r.RacketType,
                 ForehandRubberType = r.ForehandRubberType,
                 BackhandRubberType = r.BackhandRubberType,
-                Rank = currentRank,
+                Rank = rank,
                 ResultCount = result.Select(r => new
                 {
                     IdA = r.Player_Id_A_1,
