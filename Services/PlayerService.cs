@@ -44,7 +44,7 @@ public class PlayerService : IPlayerService
         {
             int? rank = null;
 
-            if (r.LatestResultDateTime != null && r.LatestResultDateTime >= twoMonthsAgo)
+            if (r.IsOnLeave || (r.LatestResultDateTime != null && r.LatestResultDateTime >= twoMonthsAgo))
             {
                 if (r.Score != previousScore)
                 {
@@ -70,6 +70,7 @@ public class PlayerService : IPlayerService
                 RacketType = r.RacketType,
                 ForehandRubberType = r.ForehandRubberType,
                 BackhandRubberType = r.BackhandRubberType,
+                IsOnLeave = r.IsOnLeave,
                 Rank = rank,
                 ResultCount = result.Select(r => new
                 {

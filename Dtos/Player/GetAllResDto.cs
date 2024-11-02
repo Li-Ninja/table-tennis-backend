@@ -16,4 +16,5 @@ public class GetAllResDto
     public int WinningCount { get; set; }
     public DateTimeOffset? UpdateDateTime { get; set; }
     public DateTimeOffset? LatestResultDateTime { get; set; }
+    public Boolean IsOnLeave { get; set; }
 }
