@@ -1,5 +1,6 @@
 
 using table_tennis_backend.Services;
+using table_tennis_backend.Const;
 using table_tennis_backend.Dtos.Player;
 using table_tennis_backend.Database.MsSql.TableTennis.Model;
 using table_tennis_backend.Database.MsSql.TableTennis.Repositories;
@@ -44,7 +45,7 @@ public class PlayerService : IPlayerService
         {
             int? rank = null;
 
-            if (r.IsOnLeave || (r.LatestResultDateTime != null && r.LatestResultDateTime >= twoMonthsAgo))
+            if (r.Status == PlayerStatusEnum.OnLeave || (r.LatestResultDateTime != null && r.LatestResultDateTime >= twoMonthsAgo))
             {
                 if (r.Score != previousScore)
                 {
@@ -70,7 +71,7 @@ public class PlayerService : IPlayerService
                 RacketType = r.RacketType,
                 ForehandRubberType = r.ForehandRubberType,
                 BackhandRubberType = r.BackhandRubberType,
-                IsOnLeave = r.IsOnLeave,
+                IsOnLeave = r.Status == PlayerStatusEnum.OnLeave,
                 Rank = rank,
                 ResultCount = result.Select(r => new
                 {

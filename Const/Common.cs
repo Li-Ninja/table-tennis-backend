@@ -33,3 +33,10 @@ public enum RubberTypeEnum
     LongPimple = 4,
     Anti = 5
 }
+
+public enum PlayerStatusEnum
+{
+    Freeze = 0,
+    Play = 1,
+    OnLeave = 2
+}

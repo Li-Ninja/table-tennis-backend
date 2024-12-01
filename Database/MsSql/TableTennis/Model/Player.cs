@@ -23,5 +23,5 @@ public partial class Player
     public RubberTypeEnum BackhandRubberType { get; set; }
     public DateTimeOffset? UpdateDateTime { get; set; }
     public DateTimeOffset? LatestResultDateTime { get; set; }
-    public Boolean IsOnLeave { get; set; }
+    public PlayerStatusEnum Status { get; set; }
 }
