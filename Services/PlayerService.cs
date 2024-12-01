@@ -34,7 +34,10 @@ public class PlayerService : IPlayerService
         var playerList = await _repository.ReadAllPlayer();
         // TODO create 3's enum
         var result = await _resultRepository.ReadAllResult(null, 3, null, null, null, null);
-        var sortedPlayerList = playerList.OrderByDescending(p => p.Score).ToList();
+        var sortedPlayerList = playerList
+                                .Where(p => p.Status != PlayerStatusEnum.Freeze)
+                                .OrderByDescending(p => p.Score)
+                                .ToList();
 
         int? currentRank = 1;
         int previousScore = -1;
