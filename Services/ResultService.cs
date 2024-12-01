@@ -1,4 +1,3 @@
-
 using table_tennis_backend.Services;
 using table_tennis_backend.Dtos.Result;
 using ResultItemDto = table_tennis_backend.Dtos.ResultItem.GetResDto;
@@ -219,35 +218,52 @@ public class ResultService : IResultService
 
         var allResultItemList = await _repository_result_item.ReadAllResultItem();
 
-        var rankings = results.Select(r => new GetRankingResDto
+        var rankings = results.Select(r =>
         {
-            Id = r.Id,
-            Event_Id = r.Event_Id,
-            Event_Name = r.Event.Name,
-            Player_NameA1 = r.PlayerA1?.Name,
-            Player_NameB1 = r.PlayerB1?.Name,
-            Player_Id_A_1 = r.Player_Id_A_1,
-            Player_Id_B_1 = r.Player_Id_B_1,
-            ScoreA = r.ScoreA,
-            ScoreB = r.ScoreB,
-            ResultDateTime = r.ResultDateTime,
-            ResultItemList = allResultItemList
+            bool shouldSwap = false;
+
+            // 如果搜尋條件中有指定 Player_Id_A_1，且該 ID 在資料庫中是 B 方，則需要交換
+            if (req.Player_Id_A_1.HasValue && r.Player_Id_B_1 == req.Player_Id_A_1.Value)
+            {
+                shouldSwap = true;
+            }
+            // 如果搜尋條件中有指定 Player_Id_B_1，且該 ID 在資料庫中是 A 方，則需要交換
+            else if (req.Player_Id_B_1.HasValue && r.Player_Id_A_1 == req.Player_Id_B_1.Value)
+            {
+                shouldSwap = true;
+            }
+
+            var resultItems = allResultItemList
                 .Where(ri => ri.Result_Id == r.Id)
                 .Select(ri => new ResultItemDto
                 {
                     Result_Id = ri.Result_Id,
                     MatchIndex = ri.MatchIndex,
-                    ScoreA = ri.ScoreA,
-                    ScoreB = ri.ScoreB
-                }).ToList()
+                    ScoreA = shouldSwap ? ri.ScoreB : ri.ScoreA,
+                    ScoreB = shouldSwap ? ri.ScoreA : ri.ScoreB
+                })
+                .ToList();
+
+            return new GetRankingResDto
+            {
+                Id = r.Id,
+                Event_Id = r.Event_Id,
+                Event_Name = r.Event.Name,
+                Player_NameA1 = shouldSwap ? r.PlayerB1?.Name : r.PlayerA1?.Name,
+                Player_NameB1 = shouldSwap ? r.PlayerA1?.Name : r.PlayerB1?.Name,
+                Player_Id_A_1 = shouldSwap ? r.Player_Id_B_1 : r.Player_Id_A_1,
+                Player_Id_B_1 = shouldSwap ? r.Player_Id_A_1 : r.Player_Id_B_1,
+                ScoreA = shouldSwap ? r.ScoreB : r.ScoreA,
+                ScoreB = shouldSwap ? r.ScoreA : r.ScoreB,
+                ResultDateTime = r.ResultDateTime,
+                ResultItemList = resultItems
+            };
         })
         .OrderBy(r => r.ResultDateTime)
         .ToList();
 
         return rankings;
     }
-
-
 
     public async Task<GetResDto> GetResultByOtherId(int event_id, int round, int roundIndex)
     {
@@ -353,6 +369,4 @@ public class ResultService : IResultService
             return (scoreA, scoreB);
         }
     }
-
-
 }
