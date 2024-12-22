@@ -12,12 +12,14 @@ public class PlayerService : IPlayerService
 {
     private readonly IPlayerRepository _repository;
     private readonly IResultRepository _resultRepository;
+    private readonly IScoreService _scoreService;
 
 
-    public PlayerService(IPlayerRepository repository, IResultRepository resultRepository)
+    public PlayerService(IPlayerRepository repository, IResultRepository resultRepository, IScoreService scoreService)
     {
         _repository = repository;
         _resultRepository = resultRepository;
+        _scoreService = scoreService;
     }
 
     public async Task AddPlayer(AddReqDto[] req)
@@ -110,5 +112,30 @@ public class PlayerService : IPlayerService
 
         player.Name = updateReqDto.Name;
         await _repository.UpdatePlayer(player);
+    }
+
+    public async Task<GetComparisonResDto> GetComparison(GetComparisonReqDto req)
+    {
+        var playerAAll = await _scoreService.GetPlayerStats(req.IdA, req.IdB, PlayerComparisonTypeEnum.All);
+        var playerARecent = await _scoreService.GetPlayerStats(req.IdA, req.IdB, PlayerComparisonTypeEnum.Recent);
+        var playerBAll = await _scoreService.GetPlayerStats(req.IdB, req.IdA, PlayerComparisonTypeEnum.All);
+        var playerBRecent = await _scoreService.GetPlayerStats(req.IdB, req.IdA, PlayerComparisonTypeEnum.Recent);
+
+        var playerA = new PlayerComparison
+        {
+            All = playerAAll,
+            Recent = playerARecent
+        };
+        var playerB = new PlayerComparison
+        {
+            All = playerBAll,
+            Recent = playerBRecent
+        };
+
+        return new GetComparisonResDto
+        {
+            PlayerA = playerA,
+            PlayerB = playerB
+        };
     }
 }

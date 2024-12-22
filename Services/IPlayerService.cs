@@ -8,4 +8,5 @@ public interface IPlayerService
     Task AddPlayer(AddReqDto[] req);
     Task<List<GetAllResDto>> GetAllPlayer();
     Task UpdatePlayer(UpdateReqDto req);
+    Task<GetComparisonResDto> GetComparison(GetComparisonReqDto req);
 }

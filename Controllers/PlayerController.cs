@@ -28,6 +28,16 @@ public class PlayerController : ControllerBase
         return Ok(players);
     }
 
+    // GET: api/Player/comparison
+    [HttpGet("Comparison")]
+    // TODO result and generic
+    public async Task<IActionResult> GetPlayerComparison([FromQuery] GetComparisonReqDto req)
+    {
+        var result = await _service.GetComparison(req);
+
+        return Ok(result);
+    }
+
     // POST: api/Player
     [HttpPost]
     public async Task<IActionResult> Create(AddReqDto[] req)

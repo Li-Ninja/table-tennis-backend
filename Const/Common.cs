@@ -40,3 +40,10 @@ public enum PlayerStatusEnum
     Play = 1,
     OnLeave = 2
 }
+
+public enum PlayerComparisonTypeEnum
+{
+    All = 0,
+    Recent = 1,
+    Annual = 2
+}
