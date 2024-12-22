@@ -22,7 +22,7 @@ public class ScoreService : IScoreService
         if (type == PlayerComparisonTypeEnum.Recent)
         {
             // 取最前面 10 筆
-            list = list.Take(10).ToList();
+            list = list.OrderByDescending(r => r.ResultDateTime).Take(10).ToList();
         }
 
 
