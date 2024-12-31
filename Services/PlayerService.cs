@@ -66,10 +66,6 @@ public class PlayerService : IPlayerService
 
             previousScore = r.Score;
 
-            var targetYear = r.LatestResultDateTime.HasValue && r.LatestResultDateTime.Value.Month == 11
-                ? r.LatestResultDateTime.Value.Year + 1
-                : r.LatestResultDateTime?.Year ?? DateTimeOffset.Now.Year;
-
             return new GetAllResDto
             {
                 Id = r.Id,
@@ -94,9 +90,9 @@ public class PlayerService : IPlayerService
                     ResultDateTime = r.ResultDateTime
                 })
                .Where(ri => (ri.IdA == r.Id || ri.IdB == r.Id)
-                 && (ri.ResultDateTime.Month == 11
+                 && (ri.ResultDateTime.Month == 12
                      ? ri.ResultDateTime.Year + 1
-                     : ri.ResultDateTime.Year) == targetYear)
+                     : ri.ResultDateTime.Year) == (DateTimeOffset.Now.Month == 12 ? DateTimeOffset.Now.Year + 1 : DateTimeOffset.Now.Year))
                 .Count(),
                 WinningCount = result.Select(r => new
                 {
