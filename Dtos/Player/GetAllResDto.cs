@@ -13,6 +13,7 @@ public class GetAllResDto
     public RubberTypeEnum BackhandRubberType { get; set; }
     public int? Rank { get; set; }
     public int ResultCount { get; set; }
+    public int ResultCountByYearly { get; set; }
     public int WinningCount { get; set; }
     public DateTimeOffset? UpdateDateTime { get; set; }
     public DateTimeOffset? LatestResultDateTime { get; set; }
