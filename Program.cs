@@ -62,6 +62,8 @@ builder.Services.AddCors(options =>
                                                 "http://localhost:9000",
                                                 "localhost",
                                                 "localhost:9000",
+                                                "http://192.168.56.201",
+                                                "http://192.168.56.201:9000",
                                                 "https://ttt.redxninja.com",
                                                 "https://ttt-admin.redxninja.com",
                                                 "https://ttt-api.redxninja.com",
