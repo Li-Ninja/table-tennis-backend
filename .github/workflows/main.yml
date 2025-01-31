@@ -60,6 +60,7 @@ jobs:
                   push: true
                   tags: |
                       ghcr.io/li-ninja/table-tennis-backend:${{ github.sha }}
+                      ghcr.io/li-ninja/table-tennis:${{ github.ref_name }}
                       ghcr.io/li-ninja/table-tennis-backend:latest
 
     deploy:
@@ -69,22 +70,46 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v2
 
+            - name: Replace TAG locally in docker-compose.yml
+              run: |
+                TAG=${{ github.ref_name }}
+                if [ -z "$TAG" ]; then
+                  TAG=${{ github.sha }}
+                fi
+                echo "Using TAG: $TAG"
+                sed -i "s/\${TAG}/$TAG/g" docker-compose.yml
+                echo "Modified docker-compose.yml:"
+                cat docker-compose.yml
+
             - name: Set up SSH
               uses: webfactory/ssh-agent@v0.5.3
               with:
                   ssh-private-key: ${{ secrets.GCP_PRIVATE_KEY }}
 
-            - name: Copy docker-compose file
-              run: |
-                  scp -o StrictHostKeyChecking=no ./docker-compose.yml ${{ secrets.GCP_USER }}@${{ secrets.GCP_SERVER }}:/home/${{ secrets.GCP_USER }}
-
             - name: Deploy to server
               run: |
-                  ssh -o StrictHostKeyChecking=no ${{ secrets.GCP_USER }}@${{ secrets.GCP_SERVER }} "\
-                  export DB_IP=\"${{ secrets.DB_IP }}\" && \
-                  export DB_PORT=\"${{ secrets.DB_PORT }}\" && \
-                  export DB_USER=\"${{ secrets.DB_USER }}\" && \
-                  export DB_PASSWORD=\"${{ secrets.DB_PASSWORD }}\" && \
-                  docker-compose pull && \
-                  docker-compose up -d --no-deps --build --force-recreate &&\
-                  docker image prune -f"
+                  scp -o StrictHostKeyChecking=no ./docker-compose.yml ${{ secrets.GCP_USER }}@${{ secrets.GCP_SERVER }}:/home/${{ secrets.GCP_USER }}
+                  ssh -o StrictHostKeyChecking=no ${{ secrets.GCP_USER }}@${{ secrets.GCP_SERVER }} << EOF
+
+                  export DB_IP="${{ secrets.DB_IP }}"
+                  export DB_PORT="${{ secrets.DB_PORT }}"
+                  export DB_USER="${{ secrets.DB_USER }}"
+                  export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+
+                  echo "start docker-compose down";
+
+                  docker-compose down;
+
+                  while [ "$(docker-compose ps -q)" ]; do
+                    echo "wait docker-compose down";
+                    sleep 2;
+                  done;
+
+                  echo "docker-compose down completed";
+
+                  echo "start cleaning unused images";
+                  docker image prune -a --force;
+                  echo "cleaning completed, ready to start new containers";
+                  docker-compose up -d;
+
+                  EOF
