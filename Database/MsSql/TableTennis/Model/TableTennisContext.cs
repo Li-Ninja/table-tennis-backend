@@ -19,6 +19,8 @@ public partial class TableTennisContext : DbContext
 
     public virtual DbSet<Player> Player { get; set; }
 
+    public virtual DbSet<DoublePlayer> DoublePlayer { get; set; }
+
     public virtual DbSet<PlayerScoreHistory> PlayerScoreHistory { get; set; }
 
     public virtual DbSet<Result> Result { get; set; }
@@ -52,16 +54,30 @@ public partial class TableTennisContext : DbContext
                 .WithMany()
                 .HasForeignKey(d => d.Player_Id_B_2)
                 .HasConstraintName("FK_Result_PlayerB2");
+
+            entity.HasOne(d => d.DoublePlayerA)
+                .WithMany()
+                .HasForeignKey(d => d.DoublePlayer_Id_A)
+                .HasConstraintName("FK_Result_DoublePlayerA");
+
+            entity.HasOne(d => d.DoublePlayerB)
+                .WithMany()
+                .HasForeignKey(d => d.DoublePlayer_Id_B)
+                .HasConstraintName("FK_Result_DoublePlayerB");
         });
 
         modelBuilder.Entity<Event>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.IsSingleMatch).HasDefaultValueSql("((1))");
             entity.Property(e => e.Type).HasDefaultValueSql("((1))");
         });
 
         modelBuilder.Entity<Player>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+        });
+
+        modelBuilder.Entity<DoublePlayer>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
         });

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using table_tennis_backend.Const;
 
 namespace table_tennis_backend.Database.MsSql.TableTennis.Model;
 
@@ -26,6 +27,9 @@ public partial class Result
 
     public int? Player_Id_B_2 { get; set; }
 
+    public int? DoublePlayer_Id_A { get; set; }
+    public int? DoublePlayer_Id_B { get; set; }
+
     public int? ScoreA { get; set; }
 
     public int? ScoreB { get; set; }
@@ -33,6 +37,7 @@ public partial class Result
     public DateTimeOffset ResultDateTime { get; set; }
     public int PlayerScoreA { get; set; }
     public int PlayerScoreB { get; set; }
+    public SubEventTypeEnum SubEventType { get; set; }
 
     [ForeignKey("Event_Id")]
     [InverseProperty("Result")]

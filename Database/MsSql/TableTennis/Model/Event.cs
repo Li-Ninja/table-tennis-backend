@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using table_tennis_backend.Const;
 
 namespace table_tennis_backend.Database.MsSql.TableTennis.Model;
 
@@ -18,9 +19,7 @@ public partial class Event
     [Column(TypeName = "date")]
     public DateTime Date { get; set; }
 
-    public bool IsSingleMatch { get; set; }
-
-    public int? Type { get; set; }
+    public EventTypeEnum Type { get; set; }
 
     [InverseProperty("Event")]
     public virtual ICollection<Result> Result { get; set; } = new List<Result>();

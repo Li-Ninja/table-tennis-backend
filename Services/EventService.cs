@@ -23,7 +23,7 @@ public class EventService : IEventService
             Id = e.Id,
             Name = e.Name,
             Date = e.Date,
-            IsSingleMatch = e.IsSingleMatch,
+            Type = e.Type,
         }).ToList();
     }
 

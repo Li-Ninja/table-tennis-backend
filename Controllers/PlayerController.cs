@@ -28,6 +28,14 @@ public class PlayerController : ControllerBase
         return Ok(players);
     }
 
+    // GET: api/Player/DoublePlayer
+    [HttpGet("DoublePlayer")]
+    public async Task<IActionResult> GetAllDoublePlayerList()
+    {
+        var players = await _service.GetAllDoublePlayer();
+        return Ok(players);
+    }
+
     // GET: api/Player/comparison
     [HttpGet("Comparison")]
     // TODO result and generic

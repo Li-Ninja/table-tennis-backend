@@ -1,3 +1,5 @@
+using table_tennis_backend.Const;
+
 namespace table_tennis_backend.Dtos.Result;
 
 public class AddReqDto
@@ -18,7 +20,12 @@ public class AddRankingReqDto
 {
     public required int Event_Id { get; set; }
     public int Player_Id_A_1 { get; set; }
+    public int? Player_Id_A_2 { get; set; }
     public int Player_Id_B_1 { get; set; }
+    public int? Player_Id_B_2 { get; set; }
+    public int? DoublePlayer_Id_A { get; set; }
+    public int? DoublePlayer_Id_B { get; set; }
+    public SubEventTypeEnum SubEventType { get; set; }
     public DateTimeOffset ResultDateTime { get; set; }
     public ResultItemList[] ResultItemList { get; set; } = [];
 }

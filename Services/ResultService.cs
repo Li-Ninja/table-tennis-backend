@@ -4,6 +4,7 @@ using ResultItemDto = table_tennis_backend.Dtos.ResultItem.GetResDto;
 using table_tennis_backend.Database.MsSql.TableTennis.Model;
 using table_tennis_backend.Database.MsSql.TableTennis.Repositories;
 using Microsoft.EntityFrameworkCore;
+using table_tennis_backend.Const;
 
 
 public class ResultService : IResultService
@@ -12,17 +13,19 @@ public class ResultService : IResultService
     private readonly IResultItemRepository _repository_result_item;
     private readonly IPlayerRepository _repository_player;
     private readonly IPlayerScoreHistoryRepository _repository_playerScoreHistory;
-
+    private readonly IDoublePlayerRepository _repository_doublePlayer;
     public ResultService(
         IResultRepository repository,
         IResultItemRepository repository_result_item,
         IPlayerRepository repository_player,
+        IDoublePlayerRepository repository_doublePlayer,
         IPlayerScoreHistoryRepository repository_playerScoreHistory)
     {
         _repository = repository;
         _repository_result_item = repository_result_item;
         _repository_player = repository_player;
         _repository_playerScoreHistory = repository_playerScoreHistory;
+        _repository_doublePlayer = repository_doublePlayer;
     }
 
     public async Task AddResult(AddReqDto[] req)
@@ -61,6 +64,7 @@ public class ResultService : IResultService
         var sortedReq = req.OrderBy(item => item.ResultDateTime).ToArray();
 
         var playerList = await _repository_player.ReadAllPlayer();
+        var doublePlayerList = await _repository_doublePlayer.ReadAllDoublePlayer();
 
         var result = new List<Result>();
         var resultItem = new List<ResultItem>();
@@ -102,8 +106,12 @@ public class ResultService : IResultService
             # endregion
 
             # region 計算玩家積分
-            int playerAScore = playerList.FirstOrDefault(player => player.Id == item.Player_Id_A_1)?.Score ?? 0;
-            int playerBScore = playerList.FirstOrDefault(player => player.Id == item.Player_Id_B_1)?.Score ?? 0;
+            int playerAScore = item.SubEventType == SubEventTypeEnum.Single
+            ? playerList.FirstOrDefault(player => player.Id == item.Player_Id_A_1)?.Score ?? 0
+            : doublePlayerList.FirstOrDefault(doublePlayer => doublePlayer.Id == item.DoublePlayer_Id_A)?.Score ?? 0;
+            int playerBScore = item.SubEventType == SubEventTypeEnum.Single
+            ? playerList.FirstOrDefault(player => player.Id == item.Player_Id_B_1)?.Score ?? 0
+            : doublePlayerList.FirstOrDefault(doublePlayer => doublePlayer.Id == item.DoublePlayer_Id_B)?.Score ?? 0;
 
             playerScoreHistory.Add(new PlayerScoreHistory
             {
@@ -124,7 +132,12 @@ public class ResultService : IResultService
                 Round = 0,
                 RoundIndex = 0,
                 Player_Id_A_1 = item.Player_Id_A_1,
+                Player_Id_A_2 = item.Player_Id_A_2,
                 Player_Id_B_1 = item.Player_Id_B_1,
+                Player_Id_B_2 = item.Player_Id_B_2,
+                DoublePlayer_Id_A = item.DoublePlayer_Id_A,
+                DoublePlayer_Id_B = item.DoublePlayer_Id_B,
+                SubEventType = item.SubEventType,
                 ResultDateTime = item.ResultDateTime,
                 ScoreA = winsA,
                 ScoreB = winsB,
@@ -132,34 +145,57 @@ public class ResultService : IResultService
                 PlayerScoreB = scoreB
             });
 
-            var playerAToModify = playerList.FirstOrDefault(player => player.Id == item.Player_Id_A_1);
-            var playerBToModify = playerList.FirstOrDefault(player => player.Id == item.Player_Id_B_1);
-
-            if (playerAToModify != null)
+            if (item.SubEventType == SubEventTypeEnum.Single)
             {
-                playerAToModify.Score = scoreA;
-                playerAToModify.UpdateDateTime = DateTimeOffset.UtcNow;
-                playerAToModify.LatestResultDateTime = item.ResultDateTime;
+                var playerAToModify = playerList.FirstOrDefault(player => player.Id == item.Player_Id_A_1);
+                var playerBToModify = playerList.FirstOrDefault(player => player.Id == item.Player_Id_B_1);
+
+                if (playerAToModify != null)
+                {
+                    playerAToModify.Score = scoreA;
+                    playerAToModify.UpdateDateTime = DateTimeOffset.UtcNow;
+                    playerAToModify.LatestResultDateTime = item.ResultDateTime;
+                }
+
+                if (playerBToModify != null)
+                {
+                    playerBToModify.Score = scoreB;
+                    playerBToModify.UpdateDateTime = DateTimeOffset.UtcNow;
+                    playerBToModify.LatestResultDateTime = item.ResultDateTime;
+                }
             }
-
-            if (playerBToModify != null)
+            else
             {
-                playerBToModify.Score = scoreB;
-                playerBToModify.UpdateDateTime = DateTimeOffset.UtcNow;
-                playerBToModify.LatestResultDateTime = item.ResultDateTime;
+                var doublePlayerAToModify = doublePlayerList.FirstOrDefault(doublePlayer => doublePlayer.Id == item.DoublePlayer_Id_A);
+                var doublePlayerBToModify = doublePlayerList.FirstOrDefault(doublePlayer => doublePlayer.Id == item.DoublePlayer_Id_B);
+
+                if (doublePlayerAToModify != null)
+                {
+                    doublePlayerAToModify.Score = scoreA;
+                    doublePlayerAToModify.UpdateDateTime = DateTimeOffset.UtcNow;
+                    doublePlayerAToModify.LatestResultDateTime = item.ResultDateTime;
+                }
+
+                if (doublePlayerBToModify != null)
+                {
+                    doublePlayerBToModify.Score = scoreB;
+                    doublePlayerBToModify.UpdateDateTime = DateTimeOffset.UtcNow;
+                    doublePlayerBToModify.LatestResultDateTime = item.ResultDateTime;
+                }
             }
         }
         await _repository.CreateResult(result);
         await _repository_result_item.CreateResultItem(resultItem);
         await _repository_playerScoreHistory.CreatePlayerScore(playerScoreHistory);
         await _repository_player.UpdatePlayers(playerList);
+        await _repository_doublePlayer.UpdateDoublePlayers(doublePlayerList);
         return;
     }
 
     public async Task<List<GetResDto>> GetAllResult(GetAllReqDto req)
     {
 
-        var results = await _repository.ReadAllResult(req.Event_Id, req.Event_Type, req.StartDate, req.EndDate, req.Player_Id_A_1, req.Player_Id_B_1);
+        var results = await _repository.ReadAllResult(req.Event_Id, req.Event_Type, req.SubEventType, req.StartDate, req.EndDate, req.Player_Id_A_1, req.Player_Id_B_1);
         return results
         .OrderBy(r => r.Id)
         .Select(r => new GetResDto
@@ -167,7 +203,6 @@ public class ResultService : IResultService
             Id = r.Id,
             Event_Id = r.Event_Id,
             Event_Name = r.Event.Name,
-            IsSingleMatch = r.Event.IsSingleMatch,
             Round = r.Round,
             Player_NameA1 = r.PlayerA1?.Name,
             Player_NameA2 = r.PlayerA2?.Name,
@@ -214,7 +249,7 @@ public class ResultService : IResultService
 
     public async Task<List<GetRankingResDto>> GetResultRanking(GetAllReqDto req)
     {
-        var results = await _repository.ReadAllResult(req.Event_Id, req.Event_Type, req.StartDate, req.EndDate, req.Player_Id_A_1, req.Player_Id_B_1);
+        var results = await _repository.ReadAllResult(req.Event_Id, req.Event_Type, req.SubEventType, req.StartDate, req.EndDate, req.Player_Id_A_1, req.Player_Id_B_1);
 
         var allResultItemList = await _repository_result_item.ReadAllResultItem();
 
@@ -222,13 +257,20 @@ public class ResultService : IResultService
         {
             bool shouldSwap = false;
 
-            // 如果搜尋條件中有指定 Player_Id_A_1，且該 ID 在資料庫中是 B 方，則需要交換
-            if (req.Player_Id_A_1.HasValue && r.Player_Id_B_1 == req.Player_Id_A_1.Value)
+            // 如果搜尋條件中有指定 Player_Id_A，且該 ID 在資料庫中是 B 方，則需要交換
+            if ((req.Player_Id_A_1.HasValue && r.Player_Id_B_1 == req.Player_Id_A_1.Value) ||
+                (req.Player_Id_A_1.HasValue && r.Player_Id_B_2 == req.Player_Id_A_1.Value) ||
+                (req.Player_Id_A_2.HasValue && r.Player_Id_B_1 == req.Player_Id_A_2.Value) ||
+                (req.Player_Id_A_2.HasValue && r.Player_Id_B_2 == req.Player_Id_A_2.Value)
+                )
             {
                 shouldSwap = true;
             }
-            // 如果搜尋條件中有指定 Player_Id_B_1，且該 ID 在資料庫中是 A 方，則需要交換
-            else if (req.Player_Id_B_1.HasValue && r.Player_Id_A_1 == req.Player_Id_B_1.Value)
+            // 如果搜尋條件中有指定 Player_Id_B，且該 ID 在資料庫中是 A 方，則需要交換
+            else if ((req.Player_Id_B_1.HasValue && r.Player_Id_A_1 == req.Player_Id_B_1.Value) ||
+                     (req.Player_Id_B_1.HasValue && r.Player_Id_A_2 == req.Player_Id_B_1.Value) ||
+                     (req.Player_Id_B_2.HasValue && r.Player_Id_A_1 == req.Player_Id_B_2.Value) ||
+                     (req.Player_Id_B_2.HasValue && r.Player_Id_A_2 == req.Player_Id_B_2.Value))
             {
                 shouldSwap = true;
             }
@@ -252,11 +294,17 @@ public class ResultService : IResultService
                 Player_NameA1 = shouldSwap ? r.PlayerB1?.Name : r.PlayerA1?.Name,
                 Player_NameB1 = shouldSwap ? r.PlayerA1?.Name : r.PlayerB1?.Name,
                 Player_Id_A_1 = shouldSwap ? r.Player_Id_B_1 : r.Player_Id_A_1,
+                Player_Id_A_2 = shouldSwap ? r.Player_Id_B_2 : r.Player_Id_A_2,
                 Player_Id_B_1 = shouldSwap ? r.Player_Id_A_1 : r.Player_Id_B_1,
+                Player_Id_B_2 = shouldSwap ? r.Player_Id_A_2 : r.Player_Id_B_2,
+                DoublePlayer_Id_A = r.DoublePlayer_Id_A,
+                DoublePlayer_Id_B = r.DoublePlayer_Id_B,
                 ScoreA = shouldSwap ? r.ScoreB : r.ScoreA,
                 ScoreB = shouldSwap ? r.ScoreA : r.ScoreB,
                 ResultDateTime = r.ResultDateTime,
-                ResultItemList = resultItems
+                ResultItemList = resultItems,
+                DoublePlayer_Name_A = r.DoublePlayerA?.TeamName,
+                DoublePlayer_Name_B = r.DoublePlayerB?.TeamName
             };
         })
         .OrderBy(r => r.ResultDateTime)

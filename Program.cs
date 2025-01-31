@@ -36,6 +36,7 @@ builder.Services.AddDbContext<TableTennisContext>(options =>
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IScoreService, ScoreService>();
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
+builder.Services.AddScoped<IDoublePlayerRepository, DoublePlayerRepository>();
 builder.Services.AddScoped<IPlayerScoreHistoryRepository, PlayerScoreHistoryRepository>();
 builder.Services.AddScoped<IResultService, ResultService>();
 builder.Services.AddScoped<IResultRepository, ResultRepository>();

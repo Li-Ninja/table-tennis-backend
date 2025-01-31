@@ -1,6 +1,7 @@
 using table_tennis_backend.Database.MsSql.TableTennis.Model;
 using table_tennis_backend.Database.MsSql.TableTennis.Repositories;
 using Microsoft.EntityFrameworkCore;
+using table_tennis_backend.Const;
 
 public class ResultRepository : IResultRepository
 {
@@ -17,7 +18,7 @@ public class ResultRepository : IResultRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<Result>> ReadAllResult(int? eventId, int? eventType, DateTimeOffset? startDate, DateTimeOffset? endDate, int? player_Id_A_1, int? player_Id_B_1)
+    public async Task<IEnumerable<Result>> ReadAllResult(int? eventId, EventTypeEnum? eventType, SubEventTypeEnum? subEventType, DateTimeOffset? startDate, DateTimeOffset? endDate, int? player_Id_A_1, int? player_Id_B_1)
     {
         var query = _db.Result
                         .Include(r => r.Event)
@@ -37,6 +38,11 @@ public class ResultRepository : IResultRepository
         if (eventType.HasValue)
         {
             query = query.Where(r => r.Event.Type == eventType);
+        }
+
+        if (subEventType.HasValue)
+        {
+            query = query.Where(r => r.SubEventType == subEventType);
         }
 
         if (startDate.HasValue && endDate.HasValue)
