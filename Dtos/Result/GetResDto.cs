@@ -27,10 +27,10 @@ public class GetRankingResDto
     public int Id { get; set; }
     public int Event_Id { get; set; }
     public string Event_Name { get; set; } = string.Empty;
-    public string? Player_NameA1 { get; set; }
-    public string? Player_NameA2 { get; set; }
-    public string? Player_NameB1 { get; set; }
-    public string? Player_NameB2 { get; set; }
+    public string? Player_Name_A_1 { get; set; }
+    public string? Player_Name_A_2 { get; set; }
+    public string? Player_Name_B_1 { get; set; }
+    public string? Player_Name_B_2 { get; set; }
     public string? DoublePlayer_Name_A { get; set; }
     public string? DoublePlayer_Name_B { get; set; }
     public int? Player_Id_A_1 { get; set; }

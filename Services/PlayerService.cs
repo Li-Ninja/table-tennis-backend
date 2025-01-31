@@ -37,7 +37,7 @@ public class PlayerService : IPlayerService
     {
         var playerList = await _repository.ReadAllPlayer();
         var doublePlayerList = await _doublePlayerRepository.ReadAllDoublePlayer();
-        var result = await _resultRepository.ReadAllResult(null, EventTypeEnum.Score, SubEventTypeEnum.Double, null, null, null, null);
+        var result = await _resultRepository.ReadAllResult(null, EventTypeEnum.Score, SubEventTypeEnum.Double, null, null, null, null, null, null);
         var sortedDoublePlayerList = doublePlayerList
                                 .OrderByDescending(p => p.Score)
                                 .ToList();
@@ -93,7 +93,7 @@ public class PlayerService : IPlayerService
     public async Task<List<GetAllResDto>> GetAllPlayer()
     {
         var playerList = await _repository.ReadAllPlayer();
-        var result = await _resultRepository.ReadAllResult(null, EventTypeEnum.Score, SubEventTypeEnum.Single, null, null, null, null);
+        var result = await _resultRepository.ReadAllResult(null, EventTypeEnum.Score, SubEventTypeEnum.Single, null, null, null, null, null, null);
         var sortedPlayerList = playerList
                                 .Where(p => p.Status != PlayerStatusEnum.Freeze)
                                 .OrderByDescending(p => p.Score)

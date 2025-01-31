@@ -18,7 +18,7 @@ public class ResultRepository : IResultRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<Result>> ReadAllResult(int? eventId, EventTypeEnum? eventType, SubEventTypeEnum? subEventType, DateTimeOffset? startDate, DateTimeOffset? endDate, int? player_Id_A_1, int? player_Id_B_1)
+    public async Task<IEnumerable<Result>> ReadAllResult(int? eventId, EventTypeEnum? eventType, SubEventTypeEnum? subEventType, DateTimeOffset? startDate, DateTimeOffset? endDate, int? player_Id_A_1, int? player_Id_B_1, int? player_Id_A_2, int? player_Id_B_2)
     {
         var query = _db.Result
                         .Include(r => r.Event)
@@ -26,6 +26,8 @@ public class ResultRepository : IResultRepository
                         .Include(r => r.PlayerA2)
                         .Include(r => r.PlayerB1)
                         .Include(r => r.PlayerB2)
+                        .Include(r => r.DoublePlayerA)
+                        .Include(r => r.DoublePlayerB)
                         .OrderByDescending(r => r.Round)
                         .ThenBy(r => r.RoundIndex)
                         .AsQueryable();
@@ -58,12 +60,22 @@ public class ResultRepository : IResultRepository
 
         if (player_Id_A_1.HasValue)
         {
-            query = query.Where(r => r.Player_Id_A_1 == player_Id_A_1 || r.Player_Id_B_1 == player_Id_A_1);
+            query = query.Where(r => r.Player_Id_A_1 == player_Id_A_1 || r.Player_Id_B_1 == player_Id_A_1 || r.Player_Id_A_2 == player_Id_A_1 || r.Player_Id_B_2 == player_Id_A_1);
         }
 
         if (player_Id_B_1.HasValue)
         {
-            query = query.Where(r => r.Player_Id_A_1 == player_Id_B_1 || r.Player_Id_B_1 == player_Id_B_1);
+            query = query.Where(r => r.Player_Id_A_1 == player_Id_B_1 || r.Player_Id_B_1 == player_Id_B_1 || r.Player_Id_A_2 == player_Id_B_1 || r.Player_Id_B_2 == player_Id_B_1);
+        }
+
+        if (player_Id_A_2.HasValue)
+        {
+            query = query.Where(r => r.Player_Id_A_2 == player_Id_A_2 || r.Player_Id_B_2 == player_Id_A_2);
+        }
+
+        if (player_Id_B_2.HasValue)
+        {
+            query = query.Where(r => r.Player_Id_A_2 == player_Id_B_2 || r.Player_Id_B_2 == player_Id_B_2);
         }
 
         return await query.ToListAsync();

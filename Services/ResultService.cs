@@ -195,7 +195,7 @@ public class ResultService : IResultService
     public async Task<List<GetResDto>> GetAllResult(GetAllReqDto req)
     {
 
-        var results = await _repository.ReadAllResult(req.Event_Id, req.Event_Type, req.SubEventType, req.StartDate, req.EndDate, req.Player_Id_A_1, req.Player_Id_B_1);
+        var results = await _repository.ReadAllResult(req.Event_Id, req.Event_Type, req.SubEventType, req.StartDate, req.EndDate, req.Player_Id_A_1, req.Player_Id_B_1, req.Player_Id_A_2, req.Player_Id_B_2);
         return results
         .OrderBy(r => r.Id)
         .Select(r => new GetResDto
@@ -249,7 +249,7 @@ public class ResultService : IResultService
 
     public async Task<List<GetRankingResDto>> GetResultRanking(GetAllReqDto req)
     {
-        var results = await _repository.ReadAllResult(req.Event_Id, req.Event_Type, req.SubEventType, req.StartDate, req.EndDate, req.Player_Id_A_1, req.Player_Id_B_1);
+        var results = await _repository.ReadAllResult(req.Event_Id, req.Event_Type, req.SubEventType, req.StartDate, req.EndDate, req.Player_Id_A_1, req.Player_Id_B_1, req.Player_Id_A_2, req.Player_Id_B_2);
 
         var allResultItemList = await _repository_result_item.ReadAllResultItem();
 
@@ -291,20 +291,22 @@ public class ResultService : IResultService
                 Id = r.Id,
                 Event_Id = r.Event_Id,
                 Event_Name = r.Event.Name,
-                Player_NameA1 = shouldSwap ? r.PlayerB1?.Name : r.PlayerA1?.Name,
-                Player_NameB1 = shouldSwap ? r.PlayerA1?.Name : r.PlayerB1?.Name,
+                Player_Name_A_1 = shouldSwap ? r.PlayerB1?.Name : r.PlayerA1?.Name,
+                Player_Name_A_2 = shouldSwap ? r.PlayerB2?.Name : r.PlayerA2?.Name,
+                Player_Name_B_1 = shouldSwap ? r.PlayerA1?.Name : r.PlayerB1?.Name,
+                Player_Name_B_2 = shouldSwap ? r.PlayerA2?.Name : r.PlayerB2?.Name,
                 Player_Id_A_1 = shouldSwap ? r.Player_Id_B_1 : r.Player_Id_A_1,
                 Player_Id_A_2 = shouldSwap ? r.Player_Id_B_2 : r.Player_Id_A_2,
                 Player_Id_B_1 = shouldSwap ? r.Player_Id_A_1 : r.Player_Id_B_1,
                 Player_Id_B_2 = shouldSwap ? r.Player_Id_A_2 : r.Player_Id_B_2,
-                DoublePlayer_Id_A = r.DoublePlayer_Id_A,
-                DoublePlayer_Id_B = r.DoublePlayer_Id_B,
+                DoublePlayer_Id_A = shouldSwap ? r.DoublePlayer_Id_B : r.DoublePlayer_Id_A,
+                DoublePlayer_Id_B = shouldSwap ? r.DoublePlayer_Id_A : r.DoublePlayer_Id_B,
                 ScoreA = shouldSwap ? r.ScoreB : r.ScoreA,
                 ScoreB = shouldSwap ? r.ScoreA : r.ScoreB,
                 ResultDateTime = r.ResultDateTime,
                 ResultItemList = resultItems,
-                DoublePlayer_Name_A = r.DoublePlayerA?.TeamName,
-                DoublePlayer_Name_B = r.DoublePlayerB?.TeamName
+                DoublePlayer_Name_A = shouldSwap ? r.DoublePlayerB?.TeamName : r.DoublePlayerA?.TeamName,
+                DoublePlayer_Name_B = shouldSwap ? r.DoublePlayerA?.TeamName : r.DoublePlayerB?.TeamName
             };
         })
         .OrderBy(r => r.ResultDateTime)
