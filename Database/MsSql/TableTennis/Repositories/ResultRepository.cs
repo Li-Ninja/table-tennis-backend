@@ -52,9 +52,8 @@ public class ResultRepository : IResultRepository
         else if (startDate.HasValue)
         {
             var utcDateStart = startDate.Value;
-            var utcDateEnd = utcDateStart.AddDays(1);
 
-            query = query.Where(r => r.ResultDateTime >= utcDateStart && r.ResultDateTime < utcDateEnd);
+            query = query.Where(r => r.ResultDateTime >= utcDateStart);
         }
 
         if (player_Id_A_1.HasValue)
