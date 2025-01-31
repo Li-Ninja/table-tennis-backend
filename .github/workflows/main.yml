@@ -60,7 +60,7 @@ jobs:
                   push: true
                   tags: |
                       ghcr.io/li-ninja/table-tennis-backend:${{ github.sha }}
-                      ghcr.io/li-ninja/table-tennis:${{ github.ref_name }}
+                      ghcr.io/li-ninja/table-tennis-backend:${{ github.ref_name }}
                       ghcr.io/li-ninja/table-tennis-backend:latest
 
     deploy:
