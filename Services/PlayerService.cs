@@ -39,6 +39,7 @@ public class PlayerService : IPlayerService
         var doublePlayerList = await _doublePlayerRepository.ReadAllDoublePlayer();
         var result = await _resultRepository.ReadAllResult(null, EventTypeEnum.Score, SubEventTypeEnum.Double, null, null, null, null, null, null);
         var sortedDoublePlayerList = doublePlayerList
+                                .Where(p => p.Status != DoublePlayerStatusEnum.Disabled)
                                 .OrderByDescending(p => p.Score)
                                 .ToList();
 
