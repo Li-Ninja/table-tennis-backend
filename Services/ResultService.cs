@@ -122,7 +122,7 @@ public class ResultService : IResultService
                 InitialScore_B = playerBScore,
             });
 
-            (int scoreA, int scoreB) = scoreManager.UpdateScores(playerAScore, playerBScore, winsA > winsB ? 'A' : 'B');
+            (int scoreA, int scoreB) = scoreManager.UpdateScores(playerAScore, playerBScore, winsA > winsB ? 'A' : 'B', item.ResultItemList);
             # endregion
 
             result.Add(new Result
@@ -315,7 +315,7 @@ public class ResultService : IResultService
         return rankings;
     }
 
-    public async Task<GetResDto> GetResultByOtherId(int event_id, int round, int roundIndex)
+    public async Task<GetResDto?> GetResultByOtherId(int event_id, int round, int roundIndex)
     {
 
         var result = await _repository.FindResultByOtherId(event_id, round, roundIndex);
@@ -393,8 +393,44 @@ public class ResultService : IResultService
             (247, int.MaxValue, 1, 81), // 範圍247以上，高分獲勝+1，低分獲勝+81
         };
 
-        public (int, int) UpdateScores(int scoreA, int scoreB, char winner)
+        // 低分者表現獎勵規則 - 使用向下取整的平均得分
+        private Dictionary<(int MinDiff, int MaxDiff, int AvgScore), int> performanceBonusRules = new Dictionary<(int MinDiff, int MaxDiff, int AvgScore), int>
         {
+            // 124-154 範圍
+            [(124, 154, 7)] = 6,
+            [(124, 154, 8)] = 7,
+            [(124, 154, 9)] = 8,
+            [(124, 154, 10)] = 10,
+            // 155-185 範圍
+            [(155, 185, 7)] = 8,
+            [(155, 185, 8)] = 9,
+            [(155, 185, 9)] = 10,
+            [(155, 185, 10)] = 12,
+            // 186-216 範圍
+            [(186, 216, 7)] = 10,
+            [(186, 216, 8)] = 11,
+            [(186, 216, 9)] = 12,
+            [(186, 216, 10)] = 14,
+            // 217-247 範圍
+            [(217, 247, 6)] = 11,
+            [(217, 247, 7)] = 12,
+            [(217, 247, 8)] = 13,
+            [(217, 247, 9)] = 14,
+            [(217, 247, 10)] = 20,
+            // 248以上 範圍
+            [(248, int.MaxValue, 6)] = 13,
+            [(248, int.MaxValue, 7)] = 14,
+            [(248, int.MaxValue, 8)] = 15,
+            [(248, int.MaxValue, 9)] = 16,
+            [(248, int.MaxValue, 10)] = 22,
+        };
+
+        public (int, int) UpdateScores(int scoreA, int scoreB, char winner, ResultItemList[]? resultItems = null)
+        {
+            // 最終回傳的分數
+            int finalScoreA = scoreA;
+            int finalScoreB = scoreB;
+
             int scoreAChange = 0;
             int scoreBChange = 0;
             int diff = Math.Abs(scoreA - scoreB);
@@ -412,11 +448,85 @@ public class ResultService : IResultService
                 scoreBChange += scoreB > scoreA ? scoreRule.HighWinPoints : scoreRule.LowWinPoints;
             }
 
-            // 更新分數
-            scoreA += scoreAChange;
-            scoreB += scoreBChange;
+            // 計算低分者表現獎勵（僅適用於低分者戰敗情況）
+            // 使用比賽前的積分差距
+            if (resultItems != null && resultItems.Any())
+            {
+                var performanceBonus = CalculatePerformanceBonus(scoreA, scoreB, winner, resultItems);
+                scoreAChange += performanceBonus.Item1;
+                scoreBChange += performanceBonus.Item2;
+            }
 
-            return (scoreA, scoreB);
+            // 計算最終分數
+            finalScoreA += scoreAChange;
+            finalScoreB += scoreBChange;
+
+            return (finalScoreA, finalScoreB);
+        }
+
+        private (int, int) CalculatePerformanceBonus(int originalScoreA, int originalScoreB, char winner, ResultItemList[]? resultItems)
+        {
+            // 判斷哪一方是低分者
+            char lowerScorePlayer = originalScoreA < originalScoreB ? 'A' : 'B';
+
+            // 只有低分者戰敗時才給予獎勵
+            if (winner == lowerScorePlayer)
+            {
+                return (0, 0); // 低分者獲勝，不給予獎勵
+            }
+
+            // 計算低分者的平均每局得分並向下取整
+            double averageScoreDouble = CalculateAverageScore(lowerScorePlayer, resultItems);
+            int averageScore = (int)Math.Floor(averageScoreDouble);
+
+            // 計算積分差距
+            int scoreDiff = Math.Abs(originalScoreA - originalScoreB);
+
+            // 查找符合條件的獎勵規則
+            var bonusKey = performanceBonusRules.Keys.FirstOrDefault(key =>
+                scoreDiff >= key.MinDiff &&
+                scoreDiff <= key.MaxDiff &&
+                averageScore == key.AvgScore);
+
+            if (bonusKey != default && performanceBonusRules.TryGetValue(bonusKey, out int bonusPoints))
+            {
+                // 給予低分者獎勵
+                if (lowerScorePlayer == 'A')
+                {
+                    return (bonusPoints, 0);
+                }
+                else
+                {
+                    return (0, bonusPoints);
+                }
+            }
+
+            return (0, 0);
+        }
+
+        private double CalculateAverageScore(char player, ResultItemList[]? resultItems)
+        {
+            if (resultItems == null || resultItems.Length == 0)
+            {
+                return 0;
+            }
+
+            int totalScore = 0;
+            int gameCount = resultItems.Length;
+
+            foreach (var item in resultItems)
+            {
+                if (player == 'A')
+                {
+                    totalScore += item.ScoreA;
+                }
+                else
+                {
+                    totalScore += item.ScoreB;
+                }
+            }
+
+            return (double)totalScore / gameCount;
         }
     }
 }
