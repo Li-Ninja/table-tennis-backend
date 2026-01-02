@@ -100,31 +100,8 @@ public class PlayerService : IPlayerService
                                 .OrderByDescending(p => p.Score)
                                 .ToList();
 
-        int? currentRank = 1;
-        int previousScore = -1;
-        int skipCount = 0;
-        DateTimeOffset twoMonthsAgo = DateTimeOffset.Now.AddMonths(-2);
-
-        return sortedPlayerList.Select(r =>
+        return sortedPlayerList.Select((r, index) =>
         {
-            int? rank = null;
-
-            if (r.Status == PlayerStatusEnum.OnLeave || (r.LatestResultDateTime != null && r.LatestResultDateTime >= twoMonthsAgo))
-            {
-                if (r.Score != previousScore)
-                {
-                    currentRank += skipCount;
-                    skipCount = 1;
-                }
-                else
-                {
-                    skipCount++;
-                }
-                rank = currentRank;
-            }
-
-            previousScore = r.Score;
-
             return new GetAllResDto
             {
                 Id = r.Id,
@@ -136,7 +113,7 @@ public class PlayerService : IPlayerService
                 ForehandRubberType = r.ForehandRubberType,
                 BackhandRubberType = r.BackhandRubberType,
                 IsOnLeave = r.Status == PlayerStatusEnum.OnLeave,
-                Rank = rank,
+                Rank = index + 1,
                 ResultCount = result.Select(r => new
                 {
                     IdA = r.Player_Id_A_1,
