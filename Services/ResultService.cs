@@ -196,6 +196,10 @@ public class ResultService : IResultService
     {
 
         var results = await _repository.ReadAllResult(req.Event_Id, req.Event_Type, req.SubEventType, req.StartDate, req.EndDate, req.Player_Id_A_1, req.Player_Id_B_1, req.Player_Id_A_2, req.Player_Id_B_2);
+        if (!req.Event_Type.HasValue)
+        {
+            results = results.Where(r => r.Event.Type == EventTypeEnum.AnnualSingle || r.Event.Type == EventTypeEnum.AnnualDouble);
+        }
         return results
         .OrderBy(r => r.Id)
         .Select(r => new GetResDto
@@ -204,10 +208,11 @@ public class ResultService : IResultService
             Event_Id = r.Event_Id,
             Event_Name = r.Event.Name,
             Round = r.Round,
-            Player_NameA1 = r.PlayerA1?.Name,
-            Player_NameA2 = r.PlayerA2?.Name,
-            Player_NameB1 = r.PlayerB1?.Name,
-            Player_NameB2 = r.PlayerB2?.Name,
+            RoundIndex = r.RoundIndex,
+            Player_Name_A_1 = r.PlayerA1?.Name,
+            Player_Name_A_2 = r.PlayerA2?.Name,
+            Player_Name_B_1 = r.PlayerB1?.Name,
+            Player_Name_B_2 = r.PlayerB2?.Name,
             Player_Id_A_1 = r.Player_Id_A_1,
             Player_Id_A_2 = r.Player_Id_A_2,
             Player_Id_B_1 = r.Player_Id_B_1,
@@ -234,10 +239,10 @@ public class ResultService : IResultService
             Event_Name = result.Event.Name,
             Round = result.Round,
             RoundIndex = result.RoundIndex,
-            Player_NameA1 = result.PlayerA1?.Name,
-            Player_NameA2 = result.PlayerA2?.Name,
-            Player_NameB1 = result.PlayerB1?.Name,
-            Player_NameB2 = result.PlayerB1?.Name,
+            Player_Name_A_1 = result.PlayerA1?.Name,
+            Player_Name_A_2 = result.PlayerA2?.Name,
+            Player_Name_B_1 = result.PlayerB1?.Name,
+            Player_Name_B_2 = result.PlayerB2?.Name,
             Player_Id_A_1 = result.Player_Id_A_1,
             Player_Id_A_2 = result.Player_Id_A_2,
             Player_Id_B_1 = result.Player_Id_B_1,
@@ -331,10 +336,10 @@ public class ResultService : IResultService
             Event_Name = result.Event.Name,
             Round = result.Round,
             RoundIndex = result.RoundIndex,
-            Player_NameA1 = result.PlayerA1?.Name,
-            Player_NameA2 = result.PlayerA2?.Name,
-            Player_NameB1 = result.PlayerB1?.Name,
-            Player_NameB2 = result.PlayerB1?.Name,
+            Player_Name_A_1 = result.PlayerA1?.Name,
+            Player_Name_A_2 = result.PlayerA2?.Name,
+            Player_Name_B_1 = result.PlayerB1?.Name,
+            Player_Name_B_2 = result.PlayerB2?.Name,
             Player_Id_A_1 = result.Player_Id_A_1,
             Player_Id_A_2 = result.Player_Id_A_2,
             Player_Id_B_1 = result.Player_Id_B_1,
