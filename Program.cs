@@ -68,6 +68,9 @@ builder.Services.AddCors(options =>
                                                 "https://ttt.redxninja.com",
                                                 "https://ttt-admin.redxninja.com",
                                                 "https://ttt-api.redxninja.com",
+                                                "https://ttt.reddo.dev",
+                                                "https://ttt-admin.reddo.dev",
+                                                "https://ttt-api.reddo.dev",
                                                 "https://table-tennis-admin-whvz2vfgsq-de.a.run.app"
                                                 )
                                 .AllowAnyHeader()
